@@ -1,4 +1,5 @@
 import ElementLibraryModel from "../models/element_library.model";
+import ElementlibJuncAttribModel from "../models/elementlib_attribute.model";
 
 class elementLibraryRepository{
     
@@ -9,7 +10,7 @@ class elementLibraryRepository{
     
     public async findAllElementLibRelated(): Promise<ElementLibraryModel[]>{
         console.log('data terpanggil');
-        return await ElementLibraryModel.sequelize?.query("Select * from elements_library join elementlibs_attribute on elements_library.id = elementlibs_attribute.elementlib_id")??"tes";
+        return await ElementLibraryModel.findAll({include:'element_junction_fk'});        
     }
 
     public async findById(id: number): Promise<ElementLibraryModel | null> {

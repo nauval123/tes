@@ -1,6 +1,5 @@
 import { Model, Sequelize, DataTypes } from 'sequelize';
 import ElementlibJuncAttribModel from './elementlib_attribute.model';
-import { ForeignKey } from 'sequelize-typescript';
 
 export default class AttributesModel extends Model {
   public id?: number;
@@ -11,6 +10,8 @@ export default class AttributesModel extends Model {
 }
 
 export const AttributesModelMap = (sequelize: Sequelize) => {
+  console.log('inisiasi sequalise atribut model');
+  
   AttributesModel.init({
     id: {
       type: DataTypes.BIGINT,
@@ -34,11 +35,11 @@ export const AttributesModelMap = (sequelize: Sequelize) => {
   }, {
     sequelize,
     tableName: 'attributes',
-    timestamps: false
+    freezeTableName:true,
+    timestamps: false,
+    modelName:'AttributesModel'
   });
   
-  AttributesModel.sync();
-  AttributesModel.hasMany(ElementlibJuncAttribModel,{foreignKey:"attribute_id"});
-  return AttributesModel;
+  // return AttributesModel;
 }
 

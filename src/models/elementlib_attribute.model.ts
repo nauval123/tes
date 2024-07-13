@@ -10,6 +10,8 @@ export default class ElementlibJuncAttribModel extends Model{
 }
 
 export const ElementlibJuncAttribMap = (sequelize : Sequelize) => {
+    console.log('inisiasi sequalise elementlib_attribute model \n');
+
     ElementlibJuncAttribModel.init({
         id: {
           type: DataTypes.BIGINT,
@@ -17,10 +19,18 @@ export const ElementlibJuncAttribMap = (sequelize : Sequelize) => {
           primaryKey: true
         },
         elementlib_id: {
-          type: DataTypes.BIGINT
+          type: DataTypes.BIGINT,
+          references: {
+            model: 'elements_library',
+            key: 'id',
+          },
         },
         attribute_id: {
-          type: DataTypes.BIGINT
+          type: DataTypes.BIGINT,
+          references: {
+            model: 'attributes',
+            key: 'id',
+          },
         },
         value: {
           type: DataTypes.STRING,
@@ -28,13 +38,13 @@ export const ElementlibJuncAttribMap = (sequelize : Sequelize) => {
         },
       }, {
         sequelize,
-        tableName: 'attributes',
-        timestamps: false
+        tableName: 'elementlibs_attributes',
+        freezeTableName:true,
+        timestamps: false,
+        modelName:'ElementlibJuncAttribModel'
       });
-      
+
       ElementlibJuncAttribModel.sync();
+
       
-    ElementlibJuncAttribModel.belongsTo(AttributesModel,{foreignKey:"attribute_id"});
-    ElementlibJuncAttribModel.belongsTo(ElementLibraryModel,{foreignKey:"elementlib_id"});
-    return ElementlibJuncAttribModel;
 }

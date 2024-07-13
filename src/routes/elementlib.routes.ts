@@ -6,7 +6,9 @@ const router = express.Router();
 // GET - elementlib
 router.get('/', elementLibraryController.get);
 
-router.get("/testing",elementLibraryController.testing)
+router.get("/testing",elementLibraryController.testing);
+
+// router.get("/junc",elementLibraryController.getJunc);
 
 // GET - elementlib/:id
 router.get('/:id', elementLibraryController.getById);

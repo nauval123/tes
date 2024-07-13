@@ -1,16 +1,21 @@
 import { Model, Sequelize, DataTypes } from 'sequelize';
 import ElementlibJuncAttribModel from './elementlib_attribute.model';
 
+
+
 export default class ElementLibraryModel extends Model {
-  public id?: number;
+  public id!: number;
   public name!: string;
-  public icon?: string;
+  public icon!: string;
   public default_width!: string;
   public default_height!: string;
 }
 
+
+
 export const ElementLibraryMap = (sequelize: Sequelize) => {
 
+  console.log('inisiasi sequalise elementlib model');
   // sequelize.authenticate()
   // .then(() => console.log('Connection has been established successfully.'))
   // .catch((error) => console.error('Unable to connect to the database:', error));
@@ -38,10 +43,9 @@ export const ElementLibraryMap = (sequelize: Sequelize) => {
   }, {
     sequelize,
     tableName: 'elements_library',
-    timestamps: false
+    timestamps: false,
   });
-  
+    
   ElementLibraryModel.sync();
-  ElementLibraryModel.hasMany(ElementlibJuncAttribModel,{foreignKey:"elementlib_id"});
-  return ElementLibraryModel;
+
 }

@@ -3,6 +3,7 @@ import ElementLibraryModel, { ElementLibraryMap } from "../models/element_librar
 import { Request,Response } from "express";
 import elementLibraryRepository from "../repositories/elementLibraryRepository";
 import ElementLibraryService from "../services/elementslibrary.service";
+import ElementlibJuncAttribModel from "../models/elementlib_attribute.model";
 
 // format data :
 // node 
@@ -21,12 +22,15 @@ import ElementLibraryService from "../services/elementslibrary.service";
 
 const testing = async (req: Request, res : Response) => {
     try {
-        const result = await ElementLibraryService.getAllelementsOnLibrary
-        res.status(200).json({message: "hai"}); 
-    } catch (error) {
+        const result = await ElementLibraryService.testing();
         
+        res.status(200).json({message: result}); 
+    } catch (error) {
+        console.log("error");
+        console.log(error);   
     }
 }
+
 
 const get = async (req: Request, res: Response) => {
     try {

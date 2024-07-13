@@ -2,12 +2,11 @@ import bodyParser from "body-parser";
 import express  from "express";
 import usersRoutes from "../routes/users.routes";
 import elementlibRoutes from "../routes/elementlib.routes";
-import { ElementLibraryMap } from "../models/element_library.model";
 import database from "../database";
+import { initModel } from "../models/init.model";
 
 const api = express();
-
-ElementLibraryMap(database);
+initModel(database);
 
 api.use(bodyParser.json());
 api.use(bodyParser.urlencoded({ extended: true }));

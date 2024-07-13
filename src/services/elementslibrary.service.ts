@@ -4,11 +4,11 @@ import elementLibraryRepository from "../repositories/elementLibraryRepository";
 class ElementLibraryService {
   
     public async getAllelementsOnLibrary(): Promise<ElementLibraryModel[]> {
-        return await elementLibraryRepository.findAllElementLibRelated();
+        return await elementLibraryRepository.findAllElementLib();
       }
 
     public async testing(): Promise<ElementLibraryModel[]> {
-      return await elementLibraryRepository.findAllElementLib();
+      return await elementLibraryRepository.findAllElementLibRelated();
     }
     
     public async getElementsLibById(id: number): Promise<ElementLibraryModel | null> {
