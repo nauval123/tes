@@ -1,14 +1,11 @@
 import database from "../database";
-// import ElementLibraryModel, { ElementLibraryMap } from "../models/element_library.model";
 import { NextFunction, Request,Response } from "express";
-import elementLibraryRepository from "../repositories/elementLibraryRepository";
 import ElementLibraryService from "../services/elementslibrary.service";
 import { createElementLibResponse } from "../models/element_library.model";
 import { logger } from "../application/logging";
-import { Json } from "sequelize/types/utils";
 import { ResponseError } from "../response/error/error_response";
-import { Validation } from "../validation/validation";
 import { ElementLibValidation } from "../validation/elementlib_validation";
+import { throws } from "assert";
 
 const testing = async (req: Request, res : Response, errors: NextFunction) => {
     try {
@@ -62,15 +59,15 @@ const post = async (req: Request, res: Response, next:NextFunction) => {
             position: req.body.position,
             unique_key:req.body.data.key,
         };
-        checkIfExistByUniqueKey(req.body.data.key);
-        Validation.validate(ElementLibValidation.CREATE,to_send);
-        const result = ElementLibraryService.createElementsLib(to_send);
-        logger.debug("response:" + JSON.stringify(result));
+        await checkIfExistByUniqueKey(req.body.data.key,next);
+        // Validation.validate(ElementLibValidation.CREATE,to_send);
+        await ElementLibraryService.createElementsLib(to_send);
+        // logger.debug("response:" + JSON.stringify(result));
         res.status(200).json({ 
             status:"success",
             code: 200, 
         });
-    } catch (error) {
+    } catch (error : any) {
         next(error);
     }
 }
@@ -86,9 +83,9 @@ const update = async (req: Request, res: Response, next:NextFunction) => {
             default_height: 0,
             unique_key:req.body.data.key
         };
-        checkIfExistById(Number(req.params.id));
-        Validation.validate(ElementLibValidation.UPDATE,newElement);
-        const result = ElementLibraryService.updateElementsLib(Number(req.params.id),newElement);
+        await checkIfExistById(Number(req.params.id),next);
+        const validationResult = ElementLibValidation.UPDATE.safeParse(newElement);
+        const result = await ElementLibraryService.updateElementsLib(Number(req.params.id),validationResult.data);
         logger.debug("response:" + JSON.stringify(result));
         res.status(200).json({
             status:"success",
@@ -115,7 +112,7 @@ const getById = async (req: Request, res: Response,next:NextFunction) => {
     }
 }
 
-const checkIfExistById = async (id:number) => {
+const checkIfExistById = async (id:number,next:NextFunction) => {
     const check = await  ElementLibraryService.getElementsLibById(id);
     if(!check){
         throw new ResponseError(404,"Element not found");
@@ -123,17 +120,21 @@ const checkIfExistById = async (id:number) => {
     return check;
 }
 
-const checkIfExistByUniqueKey = async (unique_key:number) => {
-    const check = await  ElementLibraryService.getElementsLibByUniqueKey(unique_key);
-    if(check){
-        throw new ResponseError(403,"Element already exist!");
+const checkIfExistByUniqueKey = async (unique_key:number,next:NextFunction) => {
+    try{
+        const check = await  ElementLibraryService.getElementsLibByUniqueKey(unique_key);
+        if(check){
+            throw new ResponseError(403,"Element already exist!");
+        }
+        return check;
+    }catch(error){
+        next(error)
     }
-    return check;
 }
 
 const deleteById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        checkIfExistById(Number(req.params.id));
+        checkIfExistById(Number(req.params.id),next);
         const result = ElementLibraryService.deleteElementsLib(Number(req.params.id));
         logger.debug("response:" + JSON.stringify(result));
         res.status(200).json({ 

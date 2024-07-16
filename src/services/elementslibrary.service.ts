@@ -1,10 +1,9 @@
-// import ElementLibraryModel from "../models/element_library.model";
 import ElementLibraryModel, { createElementLibResponse } from "../models/element_library.model";
 import ElementModel, { createElementResponse } from "../models/elements.model";
 import elementLibraryRepository from "../repositories/elementLibraryRepository";
+import { ResponseError } from "../response/error/error_response";
 import ElementLibrarySequelize from "../sequelize/element_library.seq";
 import { ElementLibValidation } from "../validation/elementlib_validation";
-import { Validation } from "../validation/validation";
 
 class ElementLibraryService {
   
@@ -34,7 +33,13 @@ class ElementLibraryService {
     }
   
     public async createElementsLib(element: Omit<createElementLibResponse, "id">): Promise<ElementLibrarySequelize> {
-      return await elementLibraryRepository.create(element);
+      
+      const validationResult = ElementLibValidation.CREATE.safeParse(element);
+      if (validationResult.success == false) {
+        throw new ResponseError(400,validationResult.error.issues[0].message); // Throw a custom error with the Zod error message.
+      }else{
+        return await elementLibraryRepository.create(element);
+      }
     }
   
     public async updateElementsLib(id: number, element: Partial<createElementLibResponse>): Promise<[number, ElementLibrarySequelize[]]> {

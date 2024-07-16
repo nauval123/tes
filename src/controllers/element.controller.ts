@@ -1,7 +1,6 @@
 import database from "../database";
 import User, { UserMap } from "../models/users.model";
 import { NextFunction, Request,Response } from "express";
-import { Validation } from "../validation/validation";
 import { logger } from "../application/logging";
 import { ElementValidation } from "../validation/element_validation";
 import ElementService from "../services/elements.service";
@@ -59,8 +58,8 @@ const post = async (req: Request, res: Response, next:NextFunction) => {
         diagram_id: 1,
         elementlib_id : req.body.element_lib,
     };
-    Validation.validate(ElementValidation.CREATE,data_to_validate);
-    const result = ElementService.createElements(data_to_validate);
+    const dataResult =ElementValidation.CREATE.safeParse(data_to_validate);
+    const result = ElementService.createElements(dataResult.data);
     logger.debug("response:" + JSON.stringify(result));
     res.status(200).json({ 
         status:"success",

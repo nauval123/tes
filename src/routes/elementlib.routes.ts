@@ -1,5 +1,6 @@
 import express  from 'express';
 import elementLibraryController from '../controllers/elementLibrary.controller';
+import { errorMiddleware } from '../middleware/error.middleware';
 // import multer from 'multer';
 
 const router = express.Router();
@@ -23,4 +24,6 @@ router.put("/:id",elementLibraryController.update);
 // DELETE  - elementlib
 router.delete("/:id",elementLibraryController.deleteById);
 
+
+router.use(errorMiddleware);
 export default router;

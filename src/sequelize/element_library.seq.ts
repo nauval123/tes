@@ -57,6 +57,6 @@ export const ElementLibraryInitialize = (sequelize: Sequelize) => {
     timestamps: false,
   });
     
-  ElementLibrarySequelize.sync();
+  // ElementLibrarySequelize.sync();
 
 }

@@ -1,5 +1,6 @@
 import express from "express";
 import elementController from "../controllers/element.controller";
+import { errorMiddleware } from "../middleware/error.middleware";
 // import userController from "../controller/user-controller.js";
 // import contactController from "../controller/contact-controller.js";
 // import addressController from "../controller/address-controller.js";
@@ -23,5 +24,8 @@ router.put("/:id",elementController.update);
 
 // DELETE  - elementlib
 router.delete("/:id",elementController.deleteById);
+
+
+router.use(errorMiddleware);
 
 export default router;

@@ -44,7 +44,7 @@ export const ElementlibJuncAttribInitialize = (sequelize : Sequelize) => {
         modelName:'ElementlibJuncAttribModel'
       });
 
-      ElementlibJuncAttribSequelize.sync();
+      // ElementlibJuncAttribSequelize.sync();
 
       
 }

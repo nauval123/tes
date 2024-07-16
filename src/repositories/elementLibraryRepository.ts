@@ -4,7 +4,7 @@ import {createElementLibResponse } from "../models/element_library.model";
 // import ElementlibJuncAttribModel from "../models/elementlib_attribute.model";
 import ElementLibrarySequelize from "../sequelize/element_library.seq";
 import { ElementLibValidation } from "../validation/elementlib_validation";
-import { Validation } from "../validation/validation";
+import { ResponseError } from "../response/error/error_response";
 
 
 class elementLibraryRepository{
@@ -28,17 +28,17 @@ class elementLibraryRepository{
     }
 
     public async create(elementlib: Omit<createElementLibResponse,"id">): Promise<ElementLibrarySequelize> {
-        // const to_send = {
-        //     name : elementlib.data.title,
-        //     type : elementlib.type,
-        //     icon : elementlib.data.icon,
-        //     default_width : 0,
-        //     default_height: 0,
-        //     unique_key:elementlib.data.key,
-        // };
-        const validate_request = Validation.validate(ElementLibValidation.CREATE,elementlib);
-        logger.debug("record : " + JSON.stringify(validate_request));
-        return await ElementLibrarySequelize.create(elementlib);
+        const to_send = {
+            name : elementlib.name,
+            type : elementlib.type,
+            icon : elementlib.icon,
+            default_width : elementlib.default_width,
+            default_height: elementlib.default_height,
+            unique_key:elementlib.unique_key,
+        };
+        return await ElementLibrarySequelize.create(to_send).catch(function (error){
+            throw new ResponseError(400, "error sequelize");
+        });
     }
 
     public async update(id:number,data_to_update : Partial<createElementLibResponse>): Promise<[number,ElementLibrarySequelize[]]>{

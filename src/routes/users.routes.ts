@@ -4,6 +4,7 @@ import User, { UserMap } from '../models/users.model';
 import database from '../database';
 import express  from 'express';
 import userController from '../controllers/user.controller';
+import { errorMiddleware } from '../middleware/error.middleware';
 
 const router = express.Router();
 
@@ -25,5 +26,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 //   newUser = result.dataValues as User;
 //   res.status(201).json({ user: newUser });
 // });
+
+router.use(errorMiddleware);
 
 export default router;

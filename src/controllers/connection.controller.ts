@@ -1,5 +1,4 @@
 import { NextFunction, Request,Response } from "express";
-import { Validation } from "../validation/validation";
 import { logger } from "../application/logging";
 import { ResponseError } from "../response/error/error_response";
 import ConnectionService from "../services/connections.service";
@@ -39,7 +38,7 @@ const post = async (req: Request, res: Response, next:NextFunction) => {
            target:req.body.target,
            label: req.body.label,
         };
-        Validation.validate(ConnectionValidation.CREATE,to_send);
+        ConnectionValidation.CREATE.safeParse(to_send);
         const result = ConnectionService.createConnection(to_send);
         logger.debug("response:" + JSON.stringify(result));
         res.status(200).json({ 
@@ -62,7 +61,7 @@ const update = async (req: Request, res: Response, next:NextFunction) => {
             label: "berelasi",
         };
         checkIfExistById(Number(req.params.id));
-        Validation.validate(ConnectionValidation.UPDATE,newElement);
+        ConnectionValidation.UPDATE.safeParse(newElement);
         const result = ConnectionService.updateConnection(Number(req.params.id),newElement);
         logger.debug("response:" + JSON.stringify(result));
         res.status(200).json({
