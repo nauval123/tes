@@ -60,7 +60,7 @@ const update = async (req: Request, res: Response, next:NextFunction) => {
             // tanda relasis
             label: "berelasi",
         };
-        checkIfExistById(Number(req.params.id));
+        await checkIfExistById(Number(req.params.id),next);
         ConnectionValidation.UPDATE.safeParse(newElement);
         const result = ConnectionService.updateConnection(Number(req.params.id),newElement);
         logger.debug("response:" + JSON.stringify(result));
@@ -89,17 +89,21 @@ const getById = async (req: Request, res: Response,next:NextFunction) => {
     }
 }
 
-const checkIfExistById = async (id:number) => {
-    const check = await  ConnectionService.getConnectionById(id);
-    if(!check){
-        throw new ResponseError(404,"Element not found");
+const checkIfExistById = async (id:number, next:NextFunction) => {
+    try {
+        const check = await  ConnectionService.getConnectionById(id);
+        if(!check){
+            throw new ResponseError(404,"Element not found");
+        }
+        return check;
+    } catch (error) {
+        next(error);
     }
-    return check;
 }
 
 const deleteById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        checkIfExistById(Number(req.params.id));
+        await checkIfExistById(Number(req.params.id),next);
         const result = ConnectionService.deleteConnection(Number(req.params.id));
         logger.debug("response:" + JSON.stringify(result));
         res.status(200).json({ 

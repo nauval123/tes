@@ -102,18 +102,16 @@ export type getElementLib = {
   default_width?: number;
   default_height?: number;
   unique_key : number;
+  // position:{x:number,y:number},
+  data: { 
+    key: number;
+    title:string;
+    type_icon: string;
+    description: string;
+    icon: string;
+  },
 } 
 
-export type getElementLibwithAtt = {
-  id: number;
-  name: string;
-  type: string;
-  icon: string;
-  default_width?: number;
-  default_height?: number;
-  position : positionElement;
-  data : dataElement;
-}
 
 export type createElementLibResponse = {
   name: string;
@@ -122,5 +120,6 @@ export type createElementLibResponse = {
   default_width?: number;
   default_height?: number;
   unique_key: number;
+  description_default?:string;
 }
 

@@ -9,6 +9,9 @@ export default class ElementSequelize extends Model{
   public position_y?: number;
   public diagram_id!: number;
   public elementlib_id! : number;
+  public width! : number;
+  public height! : number;
+  elementLibrary_element: any;
 } 
 
 export const ElementsInitialize = (sequelize : Sequelize) => {
@@ -32,6 +35,14 @@ export const ElementsInitialize = (sequelize : Sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
+    height:{
+      type: DataTypes.INTEGER,
+      allowNull:true,
+    },
+    width:{
+      type: DataTypes.INTEGER,
+      allowNull:true,
+    },
     diagram_id: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -42,6 +53,10 @@ export const ElementsInitialize = (sequelize : Sequelize) => {
         model: 'elements_library',
         key: 'id',
       }
+    },
+    uuid :{
+      type: DataTypes.STRING,
+      allowNull: false, 
     }
   }, {
     sequelize,

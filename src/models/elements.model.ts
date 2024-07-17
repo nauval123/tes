@@ -52,49 +52,54 @@
 // }
 
 
-export default class ElementModel {
-  private id: number;
-  public description!: string;
-  public title!: string;
-  public position_x?: number;
-  public position_y?: number;
-  public diagram_id!: number;
-  public elementlib_id! : number;
+// export type getElementResponse = {
+//   id: number;
+//   description: string;
+//   title: string;
+//   position_x?: number;
+//   position_y?: number;
+//   diagram_id: number;
+//   elementlib_id : number;
+// }
 
-  constructor(id: number, description: string, title: string, position_x: number, position_y: number, diagram_id: number,elementlib_id: number ){
-    this.id = id;
-    this.description= description;
-    this.title= title;
-    this.position_x= position_x;
-    this.position_y= position_y;
-    this.diagram_id= diagram_id;
-    this.elementlib_id!= elementlib_id;
-  }
-
-  toJSON() {
-    return {
-      id : this.id,
-      description: this.description,
-      title: this.title,
-      position_x: this.position_x,
-      position_y: this.position_y,
-      diagram_id: this.diagram_id,
-      elementlib_id : this.elementlib_id
-    };
-  }
-}
-
-export type getElementResponse = {
-  id: number;
-  description: string;
-  title: string;
-  position_x?: number;
-  position_y?: number;
-  diagram_id: number;
-  elementlib_id : number;
+export type getElementResponses ={
+  id : number,
+  type: string,
+  data:{
+    title: string,
+    description: string,
+    icon: string,
+    key: number,
+  },
+  position:{
+    x: number,
+    y: number,
+  },
+  height:number,
+  width: number,      
+  elementlib_id : number,
+  uuid:string,
 }
 
 export type createElementResponse = {
+  type: string,
+  data:{
+    title: string,
+    description: string,
+    icon: string,
+    key: number,
+  },
+  position:{
+    x: number,
+    y: number,
+  },
+  height:number,
+  width: number,      
+  elementlib_id : number
+  uuid:string,
+}
+
+export type updateElementResponse = {
   description: string;
   title: string;
   position_x?: number;
@@ -103,13 +108,5 @@ export type createElementResponse = {
   elementlib_id : number;
 }
 
-export type updateElementResponse = {
-  id: number;
-  description: string;
-  title: string;
-  position_x?: number;
-  position_y?: number;
-  diagram_id: number;
-  elementlib_id : number;
-}
+
 

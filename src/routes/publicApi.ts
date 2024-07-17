@@ -6,6 +6,7 @@ import connectionsRoutes from "./connections.routes";
 import elementLibraryController from "../controllers/elementLibrary.controller";
 import router from "./users.routes";
 import elementController from "../controllers/element.controller";
+import connectionController from "../controllers/connection.controller";
 
 export const apiRouter = express.Router();
 
@@ -20,13 +21,24 @@ apiRouter.post('/elementslib/',elementLibraryController.post);
 apiRouter.put("/elementslib/:id",elementLibraryController.update);
 apiRouter.delete("/:id",elementLibraryController.deleteById);
 
-
+// elements
 // apiRouter.use('/elements',elementRoutes);
 apiRouter.get('/elements/',elementController.get);
 apiRouter.get('/elements/:id', elementController.getById);
 apiRouter.post('/elements/',elementController.post);
+apiRouter.post('/elements/list',elementController.postList);
 apiRouter.put("/elements/:id",elementController.update);
 apiRouter.delete("/elements/:id",elementController.deleteById);
 
 
+// connection
+// apiRouter.get('/connection/',connectionController.get);
+// apiRouter.get('/connection/:id', connectionController.getById);
+// apiRouter.post('/connection/',connectionController.post);
+// apiRouter.put("/connection/:id",connectionController.update);
+// apiRouter.delete("/connection/:id",connectionController.deleteById);
 
+
+
+
+// attribute

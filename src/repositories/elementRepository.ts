@@ -1,4 +1,3 @@
-import ElementLibraryModel from "../models/element_library.model";
 import { createElementResponse } from "../models/elements.model";
 // import ElementlibJuncAttribModel from "../models/elementlib_attribute.model";
 import ElementLibrarySequelize from "../sequelize/element_library.seq";
@@ -9,7 +8,7 @@ class ElementRepository{
     
     public async findAllElement(): Promise<ElementSequelize[]>{
         console.log('data terpanggil');
-        return await ElementSequelize.findAll();
+        return await ElementSequelize.findAll({include:'elementLibrary_element'});
     }
     
     public async findAllElementRelated(): Promise<ElementSequelize[]>{
@@ -18,11 +17,15 @@ class ElementRepository{
     }
 
     public async findById(id: number): Promise<ElementSequelize | null> {
-        return await ElementSequelize.findByPk(Number(id));
+        return await ElementSequelize.findByPk(Number(id),{include:'elementLibrary_element'});
     }
 
     public async create(element: Omit<createElementResponse,"id">): Promise<ElementSequelize> {
         return await ElementSequelize.create(element);
+    }
+
+    public async createBatch(element: createElementResponse[]): Promise<ElementSequelize> {
+        return await ElementSequelize.bulkCreate(element);
     }
 
     public async update(id:number,data : Partial<ElementSequelize>): Promise<[number,ElementSequelize[]]>{

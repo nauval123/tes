@@ -29,7 +29,7 @@ const get = async (req: Request, res: Response, errors:NextFunction) => {
         res.status(200).json({ 
             status:"success",
             code: 200,
-            elementList: result
+            data: result
          });
     } catch (error : any) {
         errors(error);
