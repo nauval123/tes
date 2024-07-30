@@ -1,5 +1,7 @@
-import { DataTypes, Sequelize } from "sequelize";
+import { Association, DataTypes, Sequelize } from "sequelize";
 import { Model } from "sequelize";
+import ElementLibrarySequelize from "./element_library.seq";
+import DiagramSequelize from "./diagrams.seq";
 
 export default class ElementSequelize extends Model{
   public id?: number;
@@ -11,10 +13,19 @@ export default class ElementSequelize extends Model{
   public elementlib_id! : number;
   public width! : number;
   public height! : number;
-  elementLibrary_element: any;
+  // public uuid! :string;
+
+  public readonly elementLibrary_element?: ElementLibrarySequelize;
+  public readonly diagram_element?: DiagramSequelize;
+
+  public static associations: {
+    elementLibrary_element: Association<ElementSequelize, ElementLibrarySequelize>;
+    diagram_element: Association<ElementSequelize,DiagramSequelize>;
+  };
 } 
 
 export const ElementsInitialize = (sequelize : Sequelize) => {
+  console.log('inisiasi sequalise element model');
   ElementSequelize.init({
     id: {
       type: DataTypes.BIGINT,
@@ -46,6 +57,10 @@ export const ElementsInitialize = (sequelize : Sequelize) => {
     diagram_id: {
       type: DataTypes.STRING,
       allowNull: true,
+      references:{
+        model:'diagrams',
+        key:'id'
+      }
     },
     elementlib_id: {
       type: DataTypes.BIGINT,
@@ -54,10 +69,10 @@ export const ElementsInitialize = (sequelize : Sequelize) => {
         key: 'id',
       }
     },
-    uuid :{
-      type: DataTypes.STRING,
-      allowNull: false, 
-    }
+    // uuid :{
+    //   type: DataTypes.STRING,
+    //   allowNull: false, 
+    // }
   }, {
     sequelize,
     tableName: 'elements',

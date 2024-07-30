@@ -1,5 +1,5 @@
 // import ElementLibraryModel from "../models/element_library.model";
-import { createElementResponse, getElementResponses } from "../models/elements.model";
+import { bulkCreateElementResponse, createElementResponse, getElementResponses } from "../models/elements.model";
 import elementRepository from "../repositories/elementRepository";
 import ElementSequelize from "../sequelize/elements.seq";
 
@@ -13,14 +13,14 @@ class ElementService {
     // Test
     (): Promise<getElementResponses[]> {
       const elementlist = await elementRepository.findAllElement();
-      const resultModified: getElementResponses[] = elementlist.map(dataElement => ({
+      const resultModified : any= elementlist.map(dataElement => ({
         id: Number(dataElement.id),
-        type: dataElement.elementLibrary_element.type,
+        type: dataElement.elementLibrary_element?.type,
         data: {
           title: dataElement.title,
           description: dataElement.description,
-          icon: dataElement.elementLibrary_element.icon,
-          key: dataElement.elementLibrary_element.unique_key
+          icon: dataElement.elementLibrary_element?.icon,
+          key: dataElement.elementLibrary_element?.unique_key
         },
         position: {
           x: Number(dataElement.position_x),
@@ -28,8 +28,8 @@ class ElementService {
         },
         height: dataElement.height,
         width: dataElement.width,
-        elementlib_id: dataElement.elementLibrary_element.id,
-        uuid:dataElement.elementLibrary_element.uuid,
+        elementlib_id: dataElement.id,
+        // uuid:dataElement.uuid,
       }));
       return resultModified;
     }
@@ -42,7 +42,7 @@ class ElementService {
       return await elementRepository.create(element);
     }
 
-    public async createElementList(element: createElementResponse[]): Promise<ElementSequelize> {
+    public async createElementList(element: bulkCreateElementResponse[]): Promise<ElementSequelize[]> {
       return await elementRepository.createBatch(element);
     }
   

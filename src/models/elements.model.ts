@@ -99,6 +99,20 @@ export type createElementResponse = {
   uuid:string,
 }
 
+export type bulkCreateElementResponse ={
+  id?: number,
+  description: string,
+  title: string,
+  position_x?: number,
+  position_y?: number,
+  diagram_id: number,
+  elementlib_id : number,
+  width : number,
+  height : number,
+  uuid :string,
+  elementLibrary_element?:any,
+}
+
 export type updateElementResponse = {
   description: string;
   title: string;

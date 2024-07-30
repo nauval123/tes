@@ -1,6 +1,6 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
-import AttributesModel from "./attributes.seq";
-import ElementLibraryModel from "./element_library.seq";
+import { DataTypes, Model, Sequelize,Association } from "sequelize";
+import DiagramSequelize from "./diagrams.seq";
+import ElementDiagramSequelize from "./element_diagram.seq";
 
 export default class ConnectionSequelize extends Model{
     public id!: number;
@@ -9,6 +9,17 @@ export default class ConnectionSequelize extends Model{
     public diagram_id?: number;
     public edgeslib_id?: number;
     public label?: string;
+
+    public readonly diagram_connection? : DiagramSequelize;
+    public readonly element_source? : ElementDiagramSequelize;
+    public readonly element_target? : ElementDiagramSequelize;
+
+    public static associations: {
+      diagram_connection: Association<ConnectionSequelize,DiagramSequelize>;
+      element_source: Association<ConnectionSequelize,DiagramSequelize>;      
+      element_target: Association<ConnectionSequelize,DiagramSequelize>;
+    };
+
 }
 
 export const ConnectionInitialize = (sequelize : Sequelize) => {
@@ -22,17 +33,17 @@ export const ConnectionInitialize = (sequelize : Sequelize) => {
         },
         source: {
           type: DataTypes.BIGINT,
-          // references: {
-          //   model: 'elements_library',
-          //   key: 'id',
-          // },
+          references: {
+            model: 'element_diagram',
+            key: 'id',
+          },
         },
         target: {
           type: DataTypes.BIGINT,
-          // references: {
-          //   model: 'attributes',
-          //   key: 'id',
-          // },
+          references: {
+            model: 'element_diagram',
+            key: 'id',
+          },
         },
         label: {
           type: DataTypes.STRING,
@@ -52,5 +63,5 @@ export const ConnectionInitialize = (sequelize : Sequelize) => {
         freezeTableName:true,
         timestamps: false,
       });
-      ConnectionSequelize.sync();     
+      // ConnectionSequelize.sync();     
 }

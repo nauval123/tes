@@ -5,12 +5,12 @@ import { logger } from "../application/logging";
 import { ElementValidation } from "../validation/element_validation";
 import ElementService from "../services/elements.service";
 import { ResponseError } from "../response/error/error_response";
-import { createElementResponse, updateElementResponse } from "../models/elements.model";
+import { bulkCreateElementResponse, createElementResponse, updateElementResponse } from "../models/elements.model";
 
 // format data
 
 
-const get = async (req: Request, res: Response, errors:NextFunction) => {
+const get = async (req: Request, res: Response, next:NextFunction) => {
     try {
         const result = await ElementService.getAllelements();
         logger.debug("response:" + JSON.stringify(result));
@@ -20,9 +20,17 @@ const get = async (req: Request, res: Response, errors:NextFunction) => {
             elementList: result
          });
     } catch (error : any) {
-        errors(error);
+        next(error);
     }
 }
+
+const getElementindDiagram = async (req: Request, res: Response, next:NextFunction) => {
+    try {
+        
+    } catch (error) {
+        next(error);
+    }
+};
 
 const update = async (req: Request, res: Response, next:NextFunction) => {
     console.log(req.params.id);
@@ -79,8 +87,7 @@ const postList = async (req: Request, res: Response, next:NextFunction) => {
         console.log('data from react js req');
         console.log(req.body);
         console.log('============');
-        const data_to_validate: createElementResponse[] = req.body.data.map((elementData: createElementResponse) => ({
-            // id: 1,
+        const data_to_validate: bulkCreateElementResponse[] = req.body.data.map((elementData: createElementResponse) => ({
             description: elementData.data.description,
             title: elementData.data.title,
             position_x: elementData.position.x,
@@ -89,14 +96,15 @@ const postList = async (req: Request, res: Response, next:NextFunction) => {
             elementlib_id: elementData.elementlib_id,
             width: elementData.width,
             height: elementData.height,
-            uuid: elementData.uuid
+            uuid: elementData.uuid,
+            elementLibrary_element:{}
           }));
         console.log('data from react js');
         console.log(data_to_validate);
         console.log('============');
         // const dataResult = ElementValidation.CREATE.safeParse(data_to_validate);
         const result = await ElementService.createElementList(data_to_validate);
-        logger.debug("response:" + JSON.stringify(result));
+        // logger.debug("response:" + JSON.stringify(result));
         res.status(200).json({ 
             status:"success data from react js",
             code: 200, 

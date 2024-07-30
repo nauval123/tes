@@ -11,8 +11,8 @@ export type getConnectionResponse = {
     source: number;
     target: number;
     label: string;
-    source_handle:string;
-    target_handle:string;
+    // source_handle:string;
+    // target_handle:string;
   }
 
   export type updateConnectionResponse ={
@@ -20,6 +20,6 @@ export type getConnectionResponse = {
     source: number;
     target: number;
     label: string;
-    source_handle:string;
-    target_handle:string;
+    // source_handle:string;
+    // target_handle:string;
   }

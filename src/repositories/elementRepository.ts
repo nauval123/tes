@@ -1,4 +1,4 @@
-import { createElementResponse } from "../models/elements.model";
+import { bulkCreateElementResponse, createElementResponse } from "../models/elements.model";
 // import ElementlibJuncAttribModel from "../models/elementlib_attribute.model";
 import ElementLibrarySequelize from "../sequelize/element_library.seq";
 import ElementSequelize from "../sequelize/elements.seq";
@@ -24,7 +24,7 @@ class ElementRepository{
         return await ElementSequelize.create(element);
     }
 
-    public async createBatch(element: createElementResponse[]): Promise<ElementSequelize> {
+    public async createBatch(element: bulkCreateElementResponse[]): Promise<ElementSequelize[]> {
         return await ElementSequelize.bulkCreate(element);
     }
 

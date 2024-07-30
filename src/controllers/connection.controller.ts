@@ -3,7 +3,7 @@ import { logger } from "../application/logging";
 import { ResponseError } from "../response/error/error_response";
 import ConnectionService from "../services/connections.service";
 import { ConnectionValidation } from "../validation/connection_validation";
-import { updateConnectionResponse } from "../models/connections.model";
+import { createConnectionResponse, updateConnectionResponse } from "../models/connections.model";
 
 // format data :
 //{
@@ -33,8 +33,8 @@ const get = async (req: Request, res: Response, errors:NextFunction) => {
 
 const post = async (req: Request, res: Response, next:NextFunction) => {
     try {
-        const to_send = {
-           source:req.body.source,
+        const to_send : createConnectionResponse = {
+           source  :req.body.source,
            target:req.body.target,
            label: req.body.label,
         };
@@ -53,7 +53,7 @@ const post = async (req: Request, res: Response, next:NextFunction) => {
 const update = async (req: Request, res: Response, next:NextFunction) => {
     console.log(req.params.id);
     try {
-        const newElement: updateConnectionResponse = {
+        const newElement : updateConnectionResponse = {
             id: req.body.id,
             source: req.body.type,
             target: req.body.icon,
