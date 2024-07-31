@@ -9,7 +9,6 @@ import { bulkCreateElementResponse, createElementResponse, updateElementResponse
 
 // format data
 
-
 const get = async (req: Request, res: Response, next:NextFunction) => {
     try {
         const result = await ElementService.getAllelements();
@@ -17,7 +16,7 @@ const get = async (req: Request, res: Response, next:NextFunction) => {
         res.status(200).json({ 
             status:"success",
             code: 200,
-            elementList: result
+            elements: result
          });
     } catch (error : any) {
         next(error);
@@ -26,7 +25,11 @@ const get = async (req: Request, res: Response, next:NextFunction) => {
 
 const getElementindDiagram = async (req: Request, res: Response, next:NextFunction) => {
     try {
-        
+        const result = await ElementService.getElementsInDiagramByIdDiagram(Number(req.params.diagram_id));
+        res.status(200).json({
+        status:"success",
+        code: 200,
+        elements: result });
     } catch (error) {
         next(error);
     }
@@ -155,4 +158,4 @@ const checkIfExistById = async (id:number,next:NextFunction) => {
     
 }
 
-export default {get,getById,update,post,deleteById,postList};
+export default {get,getById,getElementindDiagram,update,post,deleteById,postList};

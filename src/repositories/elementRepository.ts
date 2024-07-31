@@ -1,4 +1,6 @@
 import { bulkCreateElementResponse, createElementResponse } from "../models/elements.model";
+import DiagramSequelize from "../sequelize/diagrams.seq";
+import ElementDiagramSequelize from "../sequelize/element_diagram.seq";
 // import ElementlibJuncAttribModel from "../models/elementlib_attribute.model";
 import ElementLibrarySequelize from "../sequelize/element_library.seq";
 import ElementSequelize from "../sequelize/elements.seq";
@@ -16,7 +18,25 @@ class ElementRepository{
         return await ElementSequelize.findAll({include:'element_junction_fk'});        
     }
 
+    public async getAllElementRelatedDiagram(diagram_id: number): Promise<ElementSequelize[]>{
+        console.log('data terpanggil di fungsi getAllElementRelatedDiagram');
+        return await ElementSequelize.findAll({
+            include:[{
+                model: ElementDiagramSequelize,
+                as:'element_elementDiagram',
+                where:{diagram_id:diagram_id},
+            },
+            {
+                model:ElementLibrarySequelize,
+                as:"elemen_elementLibrary",
+            }
+        
+        ]    
+        });        
+    }
+
     public async findById(id: number): Promise<ElementSequelize | null> {
+        console.log("halo ini terpanggil find by id element");
         return await ElementSequelize.findByPk(Number(id),{include:'elementLibrary_element'});
     }
 

@@ -6,7 +6,7 @@ import DiagramSequelize from './diagrams.seq';
 
 
 export default class ElementDiagramSequelize extends Model {
-  public id!: number;
+  public id!: string;
   public element_id!: string;
   public diagram_id!: number;
   public occurence_status!: boolean;
@@ -39,7 +39,7 @@ export const ElementDiagramInitialize = (sequelize: Sequelize) => {
       type: DataTypes.STRING,
       references:{
         model: 'elements',
-        key: 'id',
+        key: 'uuid',
       }
     },
     diagram_id: {
@@ -49,7 +49,7 @@ export const ElementDiagramInitialize = (sequelize: Sequelize) => {
         key: 'id',
       }
     },
-    occurence_status:{
+    occurence:{
       type:DataTypes.BOOLEAN,
     }
   }, {

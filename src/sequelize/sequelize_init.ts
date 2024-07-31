@@ -19,33 +19,35 @@ export const initSequelize = (databases : Sequelize)=>{
     ConnectionInitialize(databases);
     ElementDiagramInitialize(databases);
 
-    // diagram mempunyai 
+    // diagram memiliki banyak element
     DiagramSequelize.hasMany(ElementDiagramSequelize,{
         sourceKey: 'id',
         foreignKey: 'diagram_id',
-        as: 'diagram_elementdig_fk'
+        as: 'diagram_elementdigram'
     });
-
+    
+    // diagram memiliki banyak connection / edge 
     DiagramSequelize.hasMany(ConnectionSequelize,{
         sourceKey: 'id',
         foreignKey: 'diagram_id',
-        as: 'diagram_connection_fk'
+        as: 'diagram_connection'
     });
     // ==== diagram ==
 
 
     //  element library 
-
+    // element library memiliki banyak atribut
     ElementLibrarySequelize.hasMany(ElementlibJuncAttribSequelize, {
         sourceKey: 'id',
         foreignKey: 'elementlib_id',
-        as: 'element_junction_fk'
+        as: 'element_junctionattribute'
     });
 
+    // element library memiliki banyak elemen
     ElementLibrarySequelize.hasMany(ElementSequelize, {
         sourceKey: 'id',
         foreignKey: 'elementlib_id',
-        as: 'element_element_library_fk'
+        // as: 'element_elementlibrary'
     });
 
     // ==== element library ===
@@ -59,37 +61,56 @@ export const initSequelize = (databases : Sequelize)=>{
     //  === attribute ===
 
     //  element
-    ElementSequelize.belongsTo(ElementLibrarySequelize,{
-        foreignKey:'diagram_id',
-        as: 'diagrams_element'
+    ElementSequelize.hasMany(ElementDiagramSequelize,{
+        sourceKey:'uuid',
+        foreignKey:'element_id',
+        as: 'element_elementDiagram'
     });
 
     ElementSequelize.belongsTo(ElementLibrarySequelize,{
         foreignKey:'elementlib_id',
-        as: 'elementLibrary_element'
+        as: 'elemen_elementLibrary'
     });
     // === element ===
 
-    // Elementlibrary attribute
+    // ElementlibJunattribute
     ElementlibJuncAttribSequelize.belongsTo(ElementLibrarySequelize,{
         foreignKey: 'elementlib_id',
-        as: 'junction_element'});
+        as: 'attributejunction_element'
+    });
 
     ElementlibJuncAttribSequelize.belongsTo(AttributeSequelize,{
         foreignKey: 'attribute_id',
-        as: 'junction_attribute'});
-    //  === Elementlibrary attribute ===
+        as: 'attributejunction_attribute'
+    });
+    //  === ElementlibJunattribute ===
     
     // element diagram
     ElementDiagramSequelize.belongsTo(DiagramSequelize,{
         foreignKey:'diagram_id',
-        as:"elemendig_diagram"
+        as:"elemenDiagram_diagram"
+    });
+
+    ElementDiagramSequelize.belongsTo(ElementSequelize,{
+        foreignKey:'element_id',
+        // as:"elemendig_element"
     });
     // === element diagram ===
 
     //  connection
     ConnectionSequelize.belongsTo(DiagramSequelize,{
         foreignKey:'diagram_id',
-        as:'connection_diagram'});
+        as:'connection_diagram'
+    });
+    
+    ConnectionSequelize.belongsTo(ElementSequelize,{
+        foreignKey:'source',
+        as:'connection_element_source'
+    });
+
+    ConnectionSequelize.belongsTo(ElementSequelize,{
+        foreignKey:'target',
+        as:'connection_element_target'
+    });
     //  === connection ===
 }

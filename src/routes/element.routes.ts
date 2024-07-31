@@ -15,6 +15,9 @@ router.get('/',);
 // GET - elementlib/:id
 router.get('/:id', elementController.getById);
 
+// GET - element/:id
+router.get('/:id', elementController.getById);
+
 // POST - elementlib
 router.post('/',elementController.post);
 

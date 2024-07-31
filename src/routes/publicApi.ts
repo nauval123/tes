@@ -25,6 +25,7 @@ apiRouter.delete("/:id",elementLibraryController.deleteById);
 // apiRouter.use('/elements',elementRoutes);
 apiRouter.get('/elements/',elementController.get);
 apiRouter.get('/elements/:id', elementController.getById);
+apiRouter.get('/elements/getAll/:diagram_id',elementController.getElementindDiagram)
 apiRouter.post('/elements/',elementController.post);
 apiRouter.post('/elements/list',elementController.postList);
 apiRouter.put("/elements/:id",elementController.update);

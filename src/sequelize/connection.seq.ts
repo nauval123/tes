@@ -53,10 +53,10 @@ export const ConnectionInitialize = (sequelize : Sequelize) => {
           type: DataTypes.BIGINT,
           allowNull: false
         },
-        edgeslib_id: {
-          type: DataTypes.BIGINT,
-          allowNull: false
-        },
+        // edgeslib_id: {
+        //   type: DataTypes.BIGINT,
+        //   allowNull: false
+        // },
       }, {
         sequelize,
         tableName: 'Connection',

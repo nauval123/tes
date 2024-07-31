@@ -81,6 +81,26 @@ export type getElementResponses ={
   uuid:string,
 }
 
+export type getElementResponse ={
+  id : string,
+  type: string,
+  data:{
+    id: string,
+    title: string,
+    description: string,
+    icon: string,
+    key: number,
+  },
+  position:{
+    x: number,
+    y: number,
+  },
+  height:number,
+  width: number,      
+  elementlib_id : number,
+  uuid:string,
+}
+
 export type createElementResponse = {
   type: string,
   data:{
