@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { port } from './config';
 import usersRoutes from './routes/users.routes';
 
-import api from './application/api';
+import {api} from './application/api';
 
 
 // const port = 3000;
