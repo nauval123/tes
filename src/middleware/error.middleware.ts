@@ -32,17 +32,16 @@ import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { ResponseError } from '../response/error/error_response';
 import { SequelizeScopeError, ValidationError } from 'sequelize';
-import { Sequelize } from 'sequelize-typescript';
-import { Error } from 'sequelize';
 
 export const errorMiddleware = (error: Error, req: Request, res: Response, next: NextFunction) => {
   if (res.headersSent) {
     return next(error);
   }
 
-    console.log("\n");
-    console.log("error middleware caught error by something");
-    console.log("\n");
+  console.error("\n");
+  console.error("Error middleware caught an error:");
+  console.error(error);
+  console.error("\n");
 
   if (error instanceof ZodError) {
     res.status(400).json({
@@ -50,30 +49,22 @@ export const errorMiddleware = (error: Error, req: Request, res: Response, next:
       message: 'Validation Error',
       errors: error.errors,
     });
-  }else if (error instanceof ResponseError) {
+  } else if (error instanceof ResponseError) {
     res.status(error.status).json({
-      status_code: 400,
+      status_code: error.status,
       status: 'error ResponseError',
       message: error.message,
     });
-  }else if (error instanceof SequelizeScopeError) {
+  } else if (error instanceof SequelizeScopeError || error instanceof ValidationError) {
     res.status(400).json({
-      status: 'error Db 400',
+      status: 'error 400',
       message: error.message,
     });
-  }else if (error instanceof Error) {
+  } else {
     res.status(400).json({
-      status: 'error Db 400',
-      message: error.message,
-    });
-  }
-   else {
-    console.log("\n");
-    console.log(error);
-    console.log("\n");
-    res.status(500).json({
-      status: 'error 500',
-      message: error,
+      status: 'error 400',
+      message: error.message || 'Internal Server Error',
     });
   }
 };
+

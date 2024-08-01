@@ -7,7 +7,6 @@ import DiagramSequelize, { DiagramInitialize } from "./diagrams.seq";
 import ConnectionSequelize, { ConnectionInitialize } from "./connection.seq";
 import ElementDiagramSequelize, { ElementDiagramInitialize } from "./element_diagram.seq";
 
-
 export const initSequelize = (databases : Sequelize)=>{
     
     console.log('inizialise sequilize to connect db');
@@ -23,7 +22,7 @@ export const initSequelize = (databases : Sequelize)=>{
     DiagramSequelize.hasMany(ElementDiagramSequelize,{
         sourceKey: 'id',
         foreignKey: 'diagram_id',
-        as: 'diagram_elementdigram'
+        // as: 'diagram_elementdigram'
     });
     
     // diagram memiliki banyak connection / edge 
@@ -31,6 +30,10 @@ export const initSequelize = (databases : Sequelize)=>{
         sourceKey: 'id',
         foreignKey: 'diagram_id',
         as: 'diagram_connection'
+    });
+
+    DiagramSequelize.belongsToMany(ElementSequelize,{through:ElementDiagramSequelize,foreignKey:"diagram_id",
+        as:"diagram_elements"
     });
     // ==== diagram ==
 
@@ -64,12 +67,16 @@ export const initSequelize = (databases : Sequelize)=>{
     ElementSequelize.hasMany(ElementDiagramSequelize,{
         sourceKey:'uuid',
         foreignKey:'element_id',
-        as: 'element_elementDiagram'
+        // as: 'element_elementDiagram'
     });
 
     ElementSequelize.belongsTo(ElementLibrarySequelize,{
         foreignKey:'elementlib_id',
         as: 'elemen_elementLibrary'
+    });
+
+    ElementSequelize.belongsToMany(DiagramSequelize,{through:ElementDiagramSequelize,foreignKey:"element_id", 
+        // as:"element_diagrams"
     });
     // === element ===
 
@@ -88,7 +95,7 @@ export const initSequelize = (databases : Sequelize)=>{
     // element diagram
     ElementDiagramSequelize.belongsTo(DiagramSequelize,{
         foreignKey:'diagram_id',
-        as:"elemenDiagram_diagram"
+        // as:"elemenDiagram_diagram"
     });
 
     ElementDiagramSequelize.belongsTo(ElementSequelize,{

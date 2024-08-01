@@ -3,6 +3,7 @@ import { Model } from "sequelize";
 import ElementLibrarySequelize from "./element_library.seq";
 import DiagramSequelize from "./diagrams.seq";
 import ElementDiagramSequelize from "./element_diagram.seq";
+import { AllowNull } from "sequelize-typescript";
 
 export default class ElementSequelize extends Model{
   public id?: number;
@@ -16,6 +17,7 @@ export default class ElementSequelize extends Model{
   public width! : number;
   public height! : number;
   public uuid! :string;
+  public type_f!:string;
 
   public readonly elemen_elementLibrary?: ElementLibrarySequelize;
   // public readonly diagram_element?: DiagramSequelize;
@@ -36,10 +38,12 @@ export const ElementsInitialize = (sequelize : Sequelize) => {
       primaryKey: true
     },
     description: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      allowNull:false
     },
     title: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      allowNull:false,
     },
     position_x: {
       type: DataTypes.INTEGER,
@@ -79,6 +83,10 @@ export const ElementsInitialize = (sequelize : Sequelize) => {
     uuid :{
       type: DataTypes.STRING,
       allowNull: false, 
+    },
+    type_f :{
+      type:DataTypes.STRING,
+      allowNull:false
     }
   }, {
     sequelize,

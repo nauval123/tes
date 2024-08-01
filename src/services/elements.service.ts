@@ -1,7 +1,9 @@
-// import ElementLibraryModel from "../models/element_library.model";
-import { bulkCreateElementResponse, createElementResponse, getElementResponse, getElementResponses } from "../models/elements.model";
+// import ElementLibraryModel from "../models/element_lib
+import { bulkCreateElementResponse, createElementResponse, createElementResponseResult, getElementResponse, getElementResponses, testCreateElement, updateElementResponseTest } from "../models/elements.model";
 import elementRepository from "../repositories/elementRepository";
+import { ResponseError } from "../response/error/error_response";
 import ElementSequelize from "../sequelize/elements.seq";
+import { ElementValidation } from "../validation/element_validation";
 
 class ElementService {
   
@@ -37,6 +39,15 @@ class ElementService {
     public async getElementsById(id: number): Promise<ElementSequelize | null> {
       return await elementRepository.findById((id));
     }
+    
+    // check if occurences test 
+    public async getElementsByUUIDandTitleTest(uuid: string,title:string,type_f:string): Promise<ElementSequelize|null>{
+      return await elementRepository.findByUUIDTittleTest(uuid,title,type_f);
+    }
+
+    public async getElementsTitle(title:string): Promise<ElementSequelize|null>{
+      return await elementRepository.findByTittle(title);
+    }
 
     public async getElementsInDiagramByIdDiagram(diagram_id:number): Promise<getElementResponse[] | null>{
       const elementInDiagram = await elementRepository.getAllElementRelatedDiagram(diagram_id);
@@ -63,6 +74,11 @@ class ElementService {
       return elementInDiagramTransform;
     }
   
+    public async createTest(element: Omit<testCreateElement, "id">): Promise<createElementResponseResult> {
+      return await elementRepository.createTest(element);
+    }
+
+
     public async createElements(element: Omit<createElementResponse, "id">): Promise<ElementSequelize> {
       return await elementRepository.create(element);
     }
@@ -71,8 +87,28 @@ class ElementService {
       return await elementRepository.createBatch(element);
     }
   
-    public async updateElements(id: number, element: Partial<createElementResponse>): Promise<[number, ElementSequelize[]]> {
+    public async updateElements(id: number, element: Partial<updateElementResponseTest>): Promise<[number, ElementSequelize[]]> {
       return await elementRepository.update(id, element);
+    }
+
+    public async updateElementsTest(id: string, element: Partial<updateElementResponseTest>): Promise<[number, ElementSequelize[]]> {
+      const validationResult = ElementValidation.UPDATE.safeParse(element);
+      if(!validationResult.success){
+        throw new ResponseError(403,JSON.stringify(validationResult.error.format()));
+      }
+      const result = await elementRepository.updateTest(id, validationResult.data);
+      return result;
+    }
+
+    // test
+    public async updateElementsOccuresOrNewTest(id: string,diagram_id:number ,element: Partial<updateElementResponseTest>): Promise<[number, ElementSequelize[]]> {
+      // const validationResult = ElementValidation.UPDATE.safeParse(element);
+      // if(!validationResult.success){
+      //   throw new ResponseError(403,JSON.stringify(validationResult.error.format()));
+      // }
+      // const result = await elementRepository.updateTest(uuid, validationResult.data);
+      const result = await elementRepository.updateOccurencesTest(id, diagram_id, element);
+      return result;
     }
   
     public async deleteElements(id: number): Promise<number> {

@@ -11,8 +11,8 @@ export default class ElementDiagramSequelize extends Model {
   public diagram_id!: number;
   public occurence_status!: boolean;
 
-  public element_indiagram?: ElementSequelize;
-  public diagram_element? : DiagramSequelize;
+  public element_diagrams?: ElementSequelize;
+  public diagram_elements? : DiagramSequelize;
 
   public static associations: {
     element_indiagram: Association<ElementDiagramSequelize, ElementSequelize>;
