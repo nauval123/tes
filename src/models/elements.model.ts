@@ -92,6 +92,7 @@ export type getElementResponse ={
     key: number,
   },
   position:{
+    style_id:number,
     x: number,
     y: number,
   },
@@ -156,7 +157,8 @@ export type updateElementResponse = {
   elementlib_id : number;
 }
 
-export type updateElementResponseTest = {
+export type updateElementIdentityDTO = {
+  id: number,
   type: string,
   description: string,
   position_x : number,
@@ -171,8 +173,42 @@ export type updateElementResponseTest = {
   type_f:string,
 }
 
+export type updateElementStyleDTO = {
+  style_id : number,
+  position_x : number,
+  position_y : number,
+  height:number,
+  width: number,      
+  uuid:string,
+  diagram_id:number,
+}
+
+
 export type createElementResponseResult = {
   status : string,
-  data : any;
+  data : {
+    id: number,
+    diagram_id: number,
+    type: string,
+    position:{
+        x: number,
+        y: number
+    },
+    elementlib_id: number,
+    uuid: string,
+    type_f: string,
+    data:
+      {
+        id: number,
+        uuid : string,
+        title: string,
+        key : number,
+        description: string,
+        icon : string
+      },
+   width : number,
+   height: number
+  } | any;
 }
+
 

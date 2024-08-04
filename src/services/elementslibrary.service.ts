@@ -1,4 +1,4 @@
-import { createElementLibResponse, getElementLib,} from "../models/element_library.model";
+import { createElementLibResponse, getElementLibDTO,} from "../models/element_library.model";
 import elementLibraryRepository from "../repositories/elementLibraryRepository";
 import { ResponseError } from "../response/error/error_response";
 import ElementLibrarySequelize from "../sequelize/element_library.seq";
@@ -6,40 +6,33 @@ import { ElementLibValidation } from "../validation/elementlib_validation";
 
 class ElementLibraryService {
   
-    public async getAllelementsOnLibrary(): Promise<getElementLib[]> {
+    public async getAllelementsOnLibrary(): Promise<getElementLibDTO[]> {
         // return await elementLibraryRepository.findAllElementLib();
         const result = await elementLibraryRepository.findAllElementLib();
-        const result_modified : getElementLib[] = result.map(data => ({
-          // id:  data.id,
-          // name: data.name,
-          // type:  data.type,
-          // icon: data.icon,
-          // default_width: data.default_width,
-          // default_height: data.default_height,
-          // unique_key:data.unique_key,
-          // description_default:data.description_default
-
-          id: data.id,
-          name: data.name,
-          type: data.type,
-          icon: data.icon,
-          default_width: data.default_width,
-          default_height: data.default_height,
-          unique_key : data.unique_key,
-          data: { 
-            key: data.unique_key,
-            title:data.name,
-            type_icon: data.icon,
-            description: data.name,
-            icon: data.icon,
-          },
-        }));
+        const result_modified : getElementLibDTO[] = result.map(
+            data => ({
+              id: data.id,
+              name: data.name,
+              type: data.type,
+              icon: data.icon,
+              default_width: data.default_width,
+              default_height: data.default_height,
+              unique_key : data.unique_key,
+              data: { 
+                key: data.unique_key,
+                title:data.name,
+                type_icon: data.icon,
+                description: data.name,
+                icon: data.icon,
+              },
+          })
+        );
         return result_modified;
     }
 
-    public async testing(): Promise<getElementLib[]> {
+    public async testing(): Promise<getElementLibDTO[]> {
       const result = await elementLibraryRepository.findAllElementLib();
-      const result_modified : getElementLib[] = result.map(data => ({
+      const result_modified : getElementLibDTO[] = result.map(data => ({
         // id:  data.id,
         // name: data.name,
         // type:  data.type,
@@ -55,7 +48,6 @@ class ElementLibraryService {
         icon: data.icon,
         default_width: data.default_width,
         default_height: data.default_height,
-        unique_key : data.unique_key,
         data: { 
           key: data.unique_key,
           title:data.name,

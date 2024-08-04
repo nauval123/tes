@@ -9,23 +9,24 @@ export default class ElementSequelize extends Model{
   public id?: number;
   public description!: string;
   public title!: string;
-  public position_x?: number;
-  public position_y?: number;
+  // public position_x?: number;
+  // public position_y?: number;
   // public diagram_id!: number;
   public icon!: string;
   public elementlib_id! : number;
-  public width! : number;
-  public height! : number;
+  // public width! : number;
+  // public height! : number;
   public uuid! :string;
   public type_f!:string;
 
-  public readonly elemen_elementLibrary?: ElementLibrarySequelize;
+  public readonly elements_library?: ElementLibrarySequelize | any;
   // public readonly diagram_element?: DiagramSequelize;
-  public readonly element_elementDiagram?: ElementDiagramSequelize;
+  public readonly element_diagrams?: ElementDiagramSequelize | any;
 
   public static associations: {
-    elemen_elementLibrary: Association<ElementSequelize, ElementLibrarySequelize>;
+    elements_library: Association<ElementSequelize, ElementLibrarySequelize>;
     // diagram_element: Association<ElementSequelize,DiagramSequelize>;
+    element_diagrams: Association<ElementSequelize, ElementDiagramSequelize>
   };
 } 
 
@@ -39,32 +40,32 @@ export const ElementsInitialize = (sequelize : Sequelize) => {
     },
     description: {
       type: DataTypes.STRING,
-      allowNull:false
+      allowNull:true
     },
     title: {
       type: DataTypes.STRING,
-      allowNull:false,
+      allowNull:true,
     },
-    position_x: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    position_y: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
+    // position_x: {
+    //   type: DataTypes.INTEGER,
+    //   allowNull: true
+    // },
+    // position_y: {
+    //   type: DataTypes.INTEGER,
+    //   allowNull: true
+    // },
     icon:{
       type:DataTypes.STRING,
-      allowNull:false
+      allowNull:true
     },
-    height:{
-      type: DataTypes.INTEGER,
-      allowNull:true,
-    },
-    width:{
-      type: DataTypes.INTEGER,
-      allowNull:true,
-    },
+    // height:{
+    //   type: DataTypes.INTEGER,
+    //   allowNull:true,
+    // },
+    // width:{
+    //   type: DataTypes.INTEGER,
+    //   allowNull:true,
+    // },
     // diagram_id: {
     //   type: DataTypes.STRING,
     //   allowNull: true,
