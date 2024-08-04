@@ -7,7 +7,10 @@ export default class ConnectionSequelize extends Model{
     public source!: number;
     public target!: number;
     public diagram_id?: number;
-    public edgeslib_id?: number;
+    public source_handle!: string;
+    public target_handle!: string; 
+    public uuid!: string;
+    // public edgeslib_id?: number;
     public label?: string;
 
     public readonly diagram_connection? : DiagramSequelize;
@@ -53,13 +56,23 @@ export const ConnectionInitialize = (sequelize : Sequelize) => {
           type: DataTypes.BIGINT,
           allowNull: false
         },
+        source_handle:{
+          type : DataTypes.STRING,
+        },
+        target_handle:{
+          type : DataTypes.STRING,
+        },
+        uuid:{
+          type : DataTypes.STRING,
+        }
         // edgeslib_id: {
         //   type: DataTypes.BIGINT,
         //   allowNull: false
         // },
       }, {
         sequelize,
-        tableName: 'Connection',
+        tableName: 'connections',
+        modelName: 'connections',
         freezeTableName:true,
         timestamps: false,
       });

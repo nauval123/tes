@@ -6,12 +6,14 @@ import ElementSequelize, { ElementsInitialize } from "./elements.seq";
 import DiagramSequelize, { DiagramInitialize } from "./diagrams.seq";
 import ConnectionSequelize, { ConnectionInitialize } from "./connection.seq";
 import ElementDiagramSequelize, { ElementDiagramInitialize } from "./element_diagram.seq";
+import ElementStyleSequlize, { ElementStyleInitialize } from "./element_style";
 
 
 export const initSequelize = (databases : Sequelize)=>{
     
     console.log('inizialise sequilize to connect db');
     AttributesInitialize(databases);
+    ElementStyleInitialize(databases);
     ElementlibJuncAttribInitialize(databases);
     ElementLibraryInitialize(databases);
     ElementsInitialize(databases);
@@ -23,7 +25,7 @@ export const initSequelize = (databases : Sequelize)=>{
     DiagramSequelize.hasMany(ElementDiagramSequelize,{
         sourceKey: 'id',
         foreignKey: 'diagram_id',
-        as: 'diagram_elementdigram'
+        // as: 'diagram_elementdigram'
     });
     
     // diagram memiliki banyak connection / edge 
@@ -31,6 +33,10 @@ export const initSequelize = (databases : Sequelize)=>{
         sourceKey: 'id',
         foreignKey: 'diagram_id',
         as: 'diagram_connection'
+    });
+
+    DiagramSequelize.belongsToMany(ElementSequelize,{through:ElementDiagramSequelize,foreignKey:"diagram_id",
+        as:"diagram_elements"
     });
     // ==== diagram ==
 
@@ -47,7 +53,7 @@ export const initSequelize = (databases : Sequelize)=>{
     ElementLibrarySequelize.hasMany(ElementSequelize, {
         sourceKey: 'id',
         foreignKey: 'elementlib_id',
-        // as: 'element_elementlibrary'
+        as: 'element_elementlibrary'
     });
 
     // ==== element library ===
@@ -64,12 +70,17 @@ export const initSequelize = (databases : Sequelize)=>{
     ElementSequelize.hasMany(ElementDiagramSequelize,{
         sourceKey:'uuid',
         foreignKey:'element_id',
-        as: 'element_elementDiagram'
+        // as: 'element_elementDiagram'
     });
 
     ElementSequelize.belongsTo(ElementLibrarySequelize,{
         foreignKey:'elementlib_id',
-        as: 'elemen_elementLibrary'
+        as: 'elements_library'
+    });
+
+    ElementSequelize.belongsToMany(DiagramSequelize,
+        {through:ElementDiagramSequelize,foreignKey:"element_id", 
+        // as:"element_diagrams"
     });
     // === element ===
 
@@ -86,9 +97,13 @@ export const initSequelize = (databases : Sequelize)=>{
     //  === ElementlibJunattribute ===
     
     // element diagram
+    ElementDiagramSequelize.belongsTo(ElementStyleSequlize,{
+        foreignKey:'style_id',
+        // as:"elemenDiagram_diagram"
+    });
     ElementDiagramSequelize.belongsTo(DiagramSequelize,{
         foreignKey:'diagram_id',
-        as:"elemenDiagram_diagram"
+        // as:"elemenDiagram_diagram"
     });
 
     ElementDiagramSequelize.belongsTo(ElementSequelize,{
@@ -100,17 +115,26 @@ export const initSequelize = (databases : Sequelize)=>{
     //  connection
     ConnectionSequelize.belongsTo(DiagramSequelize,{
         foreignKey:'diagram_id',
-        as:'connection_diagram'
+        // as:'connection_diagram'
     });
     
     ConnectionSequelize.belongsTo(ElementSequelize,{
         foreignKey:'source',
-        as:'connection_element_source'
+        // as:'connection_element_source'
     });
 
     ConnectionSequelize.belongsTo(ElementSequelize,{
         foreignKey:'target',
-        as:'connection_element_target'
+        // as:'connection_element_target'
     });
+    
     //  === connection ===
+   
+    // element style
+    ElementStyleSequlize.hasOne(ElementDiagramSequelize,{
+        sourceKey:"id",
+        foreignKey: "style_id",
+        as:"element_style"
+    });
+    // === element style ===
 }

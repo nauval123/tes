@@ -12,34 +12,40 @@ export const apiRouter = express.Router();
 
 apiRouter.use('/users', usersRoutes);
 
-// elementslib
+// elementslib section
 // apiRouter.use('/elementslib',elementlibRoutes);
+    // mendapatkan elementlibrary untuk element listbar
 apiRouter.get('/elementslib/', elementLibraryController.get);
+    // 
 apiRouter.get("/elementslib/testing",elementLibraryController.testing);
 apiRouter.get('/elementslib/:id', elementLibraryController.getById);
 apiRouter.post('/elementslib/',elementLibraryController.post);
 apiRouter.put("/elementslib/:id",elementLibraryController.update);
 apiRouter.delete("/:id",elementLibraryController.deleteById);
+// elementslib section
 
-// elements
-// apiRouter.use('/elements',elementRoutes);
-apiRouter.get('/elements/',elementController.get);
+// elements section
 apiRouter.get('/elements/:id', elementController.getById);
+apiRouter.post('/elements/createTest',elementController.testCreate);
+    // create dari elment list
+apiRouter.post('/elements/create',elementController.CreateElementFromElementlist);
+    // dapatkan semua element yang ada pada diagram tertentu
 apiRouter.get('/elements/getAll/:diagram_id',elementController.getElementindDiagram)
+    //=== 
 apiRouter.post('/elements/',elementController.post);
 apiRouter.post('/elements/list',elementController.postList);
-apiRouter.put("/elements/:id",elementController.update);
+apiRouter.put('/elements/updateAttribute/:id',elementController.updateOccurence);
+    // update element position width
+apiRouter.put('/elements/updateStyle/:id',elementController.updateElementStyle);
 apiRouter.delete("/elements/:id",elementController.deleteById);
-
+apiRouter.delete("/elements/delete/:id",elementController.deleteElementFromCanvas);
+// ====== element section
 
 // connection
-// apiRouter.get('/connection/',connectionController.get);
-// apiRouter.get('/connection/:id', connectionController.getById);
-// apiRouter.post('/connection/',connectionController.post);
-// apiRouter.put("/connection/:id",connectionController.update);
-// apiRouter.delete("/connection/:id",connectionController.deleteById);
-
-
-
+apiRouter.get('/connection/diagram/:diagram_id', connectionController.getAllConnectionInDiagram);
+apiRouter.get('/connection/:id', connectionController.getConnectionById);
+apiRouter.post('/connection/create/',connectionController.makeConnection);
+apiRouter.put("/connection/:id",connectionController.updateAttributeConnection);
+apiRouter.delete("/connection/:id",connectionController.deleteConnectionById);
 
 // attribute

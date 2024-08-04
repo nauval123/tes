@@ -10,8 +10,9 @@ export default class ElementLibrarySequelize extends Model {
   public icon!: string;
   public default_width!: number;
   public default_height!: number;
-  public unique_key!: number;
+  public unique_key!: string;
   public description_default?: string;
+  public type_f?: string;
 }
 
 
@@ -47,12 +48,16 @@ export const ElementLibraryInitialize = (sequelize: Sequelize) => {
       allowNull: true
     },
     unique_key:{
-      type:DataTypes.INTEGER,
+      type:DataTypes.STRING,
       allowNull:false,
       unique:true,
     },
     description_default:{
       type:DataTypes.STRING,
+    },
+    type_f:{
+      type:DataTypes.STRING,
+      allowNull:false,
     }
   }, {
     sequelize,

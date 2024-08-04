@@ -1,6 +1,7 @@
 import { Model, Association, Sequelize, DataTypes } from 'sequelize';
 import ElementSequelize from './elements.seq';
 import DiagramSequelize from './diagrams.seq';
+import ElementStyleSequlize from './element_style';
 // import ElementlibJuncAttribModel from './elementlib_attribute.seq';
 
 
@@ -9,14 +10,17 @@ export default class ElementDiagramSequelize extends Model {
   public id!: string;
   public element_id!: string;
   public diagram_id!: number;
+  public style_id!: number;
   public occurence_status!: boolean;
 
   public element_indiagram?: ElementSequelize;
-  public diagram_element? : DiagramSequelize;
+  public diagram_elements? : DiagramSequelize;
+  public element_style? : ElementStyleSequlize | any;
 
   public static associations: {
     element_indiagram: Association<ElementDiagramSequelize, ElementSequelize>;
     diagram_element: Association<ElementDiagramSequelize,DiagramSequelize>;
+    element_style: Association<ElementDiagramSequelize,ElementStyleSequlize>;
   };
 }
 
@@ -38,7 +42,7 @@ export const ElementDiagramInitialize = (sequelize: Sequelize) => {
     element_id: {
       type: DataTypes.STRING,
       references:{
-        model: 'elements',
+        model: 'element_indiagram',
         key: 'uuid',
       }
     },
@@ -47,6 +51,13 @@ export const ElementDiagramInitialize = (sequelize: Sequelize) => {
       references:{
         model: 'diagrams',
         key: 'id',
+      }
+    },
+    style_id:{
+      type: DataTypes.BIGINT,
+      references:{
+        model: "element_style",
+        key:"id",
       }
     },
     occurence:{

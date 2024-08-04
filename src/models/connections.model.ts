@@ -8,18 +8,23 @@ export type getConnectionResponse = {
   } 
   
   export type createConnectionResponse = {
-    source: number;
-    target: number;
-    label: string;
-    // source_handle:string;
-    // target_handle:string;
+    diagram_id:number,
+    source: string,
+    source_handle: string,
+    target: string,
+    target_handle: string,
+    uuid: string,
+    label: string,
+    type: string
   }
 
   export type updateConnectionResponse ={
-    id:number;
-    source: number;
-    target: number;
-    label: string;
-    // source_handle:string;
-    // target_handle:string;
+    diagram_id:number,
+    // source: string,
+    // source_handle: string,
+    // target: string,
+    // target_handle: string,
+    uuid: string,
+    label: string,
+    // type: string
   }

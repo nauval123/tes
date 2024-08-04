@@ -5,5 +5,6 @@ export type getElementDiagram ={
     diagrams_id : number,
     occurence_type: boolean,
 }
+
   
  

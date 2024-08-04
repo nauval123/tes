@@ -11,7 +11,7 @@ class elementLibraryRepository{
     
     public async findAllElementLib(): Promise<ElementLibrarySequelize[]>{
         console.log('data terpanggil');
-        return await ElementLibrarySequelize.findAll({include:''});
+        return await ElementLibrarySequelize.findAll();
     }
     
     public async findAllElementLibRelated(): Promise<ElementLibrarySequelize[]>{
