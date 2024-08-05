@@ -104,7 +104,9 @@ class ElementService {
       console.log("createElementIntoCanvas service")
       console.log(element);
       const dataResult = ElementValidation.CreateFromElementList.safeParse(element);
-    
+      if(!dataResult.success){
+        throw new ResponseError(400,JSON.stringify(dataResult.error.format()));
+      }
       console.log(dataResult.data);
       console.log("\n");
       
@@ -129,7 +131,7 @@ class ElementService {
       const validationResult = ElementValidation.UPDATE.safeParse(element);
       console.log("data hasil validasi updateElement", validationResult);
       if(!validationResult.success){
-        throw new ResponseError(403,JSON.stringify(validationResult.error.format()));
+        throw new ResponseError(400,JSON.stringify(validationResult.error.format()));
       }
       const result = await elementRepository.update(element_diagram_id, validationResult.data);
       return result;
@@ -138,7 +140,7 @@ class ElementService {
     public async updateElementsTest(id: number, element: Partial<updateElementIdentityDTO>): Promise<[number, ElementSequelize[]]> {
       const validationResult = ElementValidation.UPDATE.safeParse(element);
       if(!validationResult.success){
-        throw new ResponseError(403,JSON.stringify(validationResult.error.format()));
+        throw new ResponseError(400,JSON.stringify(validationResult.error.format()));
       }
       const result = await elementRepository.updateTest(id, validationResult.data);
       return result;
@@ -153,7 +155,7 @@ class ElementService {
     public async updateElementsOccuresOrNew(element_diagram_id: string, diagram_id:number, element: Partial<updateElementIdentityDTO>, uuid_occurences:string|any): Promise<[number, ElementDiagramSequelize[]]> {
       const validationResult = ElementValidation.UPDATE.safeParse(element);
       if(!validationResult.success){
-        throw new ResponseError(403,JSON.stringify(validationResult.error.format()));
+        throw new ResponseError(400,JSON.stringify(validationResult.error.format()));
       }
       const result = await elementRepository.updateOccurences(element_diagram_id, diagram_id, validationResult.data,uuid_occurences);
       return result;

@@ -1,7 +1,8 @@
-import { Model, Association, Sequelize, DataTypes } from 'sequelize';
+import { Model, Association, Sequelize, DataTypes, Op } from 'sequelize';
 import ElementSequelize from './elements.seq';
 import DiagramSequelize from './diagrams.seq';
 import ElementStyleSequlize from './element_style';
+import ConnectionSequelize from './connection.seq';
 // import ElementlibJuncAttribModel from './elementlib_attribute.seq';
 
 
@@ -41,35 +42,43 @@ export const ElementDiagramInitialize = (sequelize: Sequelize) => {
     },
     element_id: {
       type: DataTypes.STRING,
-      references:{
+      references: {
         model: 'element_indiagram',
         key: 'uuid',
       }
     },
     diagram_id: {
       type: DataTypes.BIGINT,
-      references:{
+      references: {
         model: 'diagrams',
         key: 'id',
       }
     },
-    style_id:{
+    style_id: {
       type: DataTypes.BIGINT,
-      references:{
+      references: {
         model: "element_style",
-        key:"id",
+        key: "id",
       }
     },
-    occurence:{
-      type:DataTypes.BOOLEAN,
+    occurence: {
+      type: DataTypes.BOOLEAN,
     }
   }, {
     sequelize,
-    modelName:'element_diagram',
+    modelName: 'element_diagram',
     tableName: 'element_diagram',
     timestamps: false,
   });
-    
-  // ElementLibrarySequelize.sync();
-
+  
+  ElementDiagramSequelize.beforeDestroy(async (elementDiagramInstance, options) => {
+    const transaction = options.transaction;
+  
+    await ConnectionSequelize.destroy({
+      where: {
+        [Op.or]: [{ source: elementDiagramInstance.id }, { target: elementDiagramInstance.id }]
+      },
+      transaction
+    });
+  });  
 }

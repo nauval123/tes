@@ -16,7 +16,7 @@ const getElementindDiagram = async (req: Request, res: Response, next:NextFuncti
         res.status(200).json({
         status:"success",
         code: 200,
-        elements: result });
+        data: result });
     } catch (error) {
         next(error);
     }
@@ -112,10 +112,10 @@ const CreateElementFromElementlist = async (req:Request, res: Response, next : N
             title: "",
             description: req.body.data.description,
             icon: req.body.data.icon,
-            key: req.body.data.uuid,
+            key: req.body.data.key,
             position_x:req.body.position.x, 
             position_y:req.body.position.y,
-            uuid: req.body.uuid,
+            uuid: req.body.data.uuid,
             elementlib_id : req.body.elementlib_id,
             width:req.body.width,
             height: req.body.height,
@@ -259,6 +259,7 @@ const deleteById = async (req: Request, res: Response, next:NextFunction) => {
 
 const deleteElementFromCanvas = async (req: Request, res: Response, next:NextFunction) => {
     try {
+        console.log("\n",req.params.id);
         await checkIfExistById(Number(req.params.id),next);
         const result = ElementService.deleteElement(Number(req.params.id));
         logger.debug("response:" + JSON.stringify(result));
@@ -273,6 +274,8 @@ const deleteElementFromCanvas = async (req: Request, res: Response, next:NextFun
 
 const checkIfExistById = async (id:number,next:NextFunction) => {
     try {
+        console.log("\n Check id :",id);
+        console.log("\n");
         const check = await  ElementService.getElementsById(id);
         if(!check){
             throw new ResponseError(404,"Element not found");

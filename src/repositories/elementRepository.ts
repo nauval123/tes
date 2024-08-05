@@ -93,7 +93,7 @@ class ElementRepository{
             return result;
         } catch (error) {
             await transaction.rollback();
-          throw new ResponseError(403,JSON.stringify(error));
+          throw new ResponseError(500,JSON.stringify(error));
         }
     }
 
@@ -210,7 +210,7 @@ class ElementRepository{
             console.log(error);
             console.log("\n");
             await transaction.rollback();
-            throw new ResponseError(403,JSON.stringify(error));
+            throw new ResponseError(500,JSON.stringify(error));
         }
         
     }
@@ -266,7 +266,7 @@ class ElementRepository{
         return result ;
        } catch (error) {
         await transaction.rollback();
-        throw new ResponseError(403,JSON.stringify(error));
+        throw new ResponseError(500,JSON.stringify(error));
        }
        
     }
@@ -300,7 +300,7 @@ class ElementRepository{
             return result;
         } catch (error) {
             await transaction.rollback();
-            throw new ResponseError(403,JSON.stringify(error));
+            throw new ResponseError(500,JSON.stringify(error));
         }
     }
 
@@ -343,13 +343,28 @@ class ElementRepository{
             return result;
         } catch (error) {
             transaction.rollback();
-            throw new ResponseError(403,JSON.stringify(error));
+            throw new ResponseError(500,JSON.stringify(error));
         }
      }
     
-    public async deleteElement(element_diagram_id:number): Promise<number>{
-        return await ElementDiagramSequelize.destroy({where:{id:element_diagram_id}});
-    }
+     public async deleteElement(element_diagram_id: number): Promise<number> {
+        const transaction = await database.transaction();
+        try {
+          const elementDiagramInstance = await ElementDiagramSequelize.findByPk(element_diagram_id, { transaction });
+          
+          if (!elementDiagramInstance) {
+            throw new ResponseError(404, "Element diagram not found");
+          }
+      
+          await elementDiagramInstance.destroy({ transaction });
+      
+          await transaction.commit();
+          return element_diagram_id;
+        } catch (error) {
+          await transaction.rollback();
+          throw new ResponseError(500, JSON.stringify(error));
+        }
+      }      
 }
 
 export default new ElementRepository();

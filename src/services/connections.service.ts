@@ -20,7 +20,7 @@ class ConnectionService {
     public async updateConnection(id: number, connection: Partial<createConnectionResponse>): Promise<[number, ConnectionSequelize[]]> {
       const validationResult = ConnectionValidation.UpdateAttributeConnection.safeParse(connection);
       if(!validationResult.success){
-        throw new ResponseError(403,JSON.stringify(validationResult.error.format()));
+        throw new ResponseError(400,JSON.stringify(validationResult.error.format()));
       }
       return await ConnectionRepository.updateConnection(id, validationResult.data);
     }
@@ -32,7 +32,7 @@ class ConnectionService {
     public async createConnection(connection: Omit<createConnectionResponse, "id">): Promise<ConnectionSequelize> {
       const validation = ConnectionValidation.CreateConnection.safeParse(connection);
       if(!validation.success){
-        throw new ResponseError(403,JSON.stringify(validation.error.format()));
+        throw new ResponseError(400,JSON.stringify(validation.error.format()));
       }
       return await ConnectionRepository.createConnection(validation.data);
     }

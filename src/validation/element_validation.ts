@@ -33,7 +33,7 @@ export class ElementValidation {
         description: z.string().min(0),
         type: z.enum(['node','group']),
         icon: z.string().min(0),
-        key: z.string().min(0),
+        key: z.number().min(0),
         position_x: z.number().min(1),
         position_y: z.number().min(1),        
         width: z.number().min(1),

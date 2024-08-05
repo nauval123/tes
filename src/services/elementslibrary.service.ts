@@ -17,7 +17,8 @@ class ElementLibraryService {
               icon: data.icon,
               default_width: data.default_width,
               default_height: data.default_height,
-              unique_key : data.unique_key,
+              // unique_key : data.unique_key,
+              type_f:data.type_f,
               data: { 
                 key: data.unique_key,
                 title:data.name,
@@ -48,6 +49,7 @@ class ElementLibraryService {
         icon: data.icon,
         default_width: data.default_width,
         default_height: data.default_height,
+        type_f:data.type_f,
         data: { 
           key: data.unique_key,
           title:data.name,

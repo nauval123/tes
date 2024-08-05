@@ -109,6 +109,7 @@ export type getElementLibDTO = {
     description: string;
     icon: string;
   },
+  type_f?:string;
 } 
 
 
