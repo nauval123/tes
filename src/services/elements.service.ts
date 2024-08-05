@@ -67,8 +67,8 @@ class ElementService {
         type:element.elements_library?.type,
         position:{
             style_id: element.element_diagrams[0].style_id,
-            x:element.element_diagrams[0].element_style.x,
-            y:element.element_diagrams[0].element_style.y,
+            x:Number(element.element_diagrams[0].element_style.x),
+            y:Number(element.element_diagrams[0].element_style.y),
           },
         elementlib_id:element.elementlib_id,
         uuid:element.uuid,
@@ -83,8 +83,8 @@ class ElementService {
             default_description:element.elements_library.description_default,
             icon:element.icon
           },
-        width:element.element_diagrams[0].element_style.width,
-        height:element.element_diagrams[0].element_style.height
+        width:Number(element.element_diagrams[0].element_style.width),
+        height:Number(element.element_diagrams[0].element_style.height)
       }
     });
     
