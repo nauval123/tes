@@ -26,7 +26,7 @@ const getAllConnectionInDiagram = async (req: Request, res: Response, errors:Nex
         res.status(200).json({ 
             status:"success",
             code: 200,
-            connections: result
+            data: result
          });
     } catch (error : any) {
         errors(error);
@@ -52,7 +52,8 @@ const makeConnection = async (req: Request, res: Response, next:NextFunction) =>
         logger.debug("response:" + JSON.stringify(result));
         res.status(200).json({ 
             status:"success",
-            code: 200, 
+            code: 200,
+            data: result.data, 
         });
     } catch (error) {
         next(error);

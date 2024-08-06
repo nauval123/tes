@@ -1,5 +1,5 @@
 import database from "../database";
-import { createConnectionResponse } from "../models/connections.model";
+import { createConnectionResponse, createConnectionResponseResult } from "../models/connections.model";
 import { createElementResponse } from "../models/elements.model";
 import { ResponseError } from "../response/error/error_response";
 import ConnectionSequelize from "../sequelize/connection.seq";
@@ -40,10 +40,29 @@ class ConnectionRepository{
         );
     }
 
-    public async createConnection(element: Omit<createConnectionResponse,"id">): Promise<ConnectionSequelize> {
-       try {
-        return await ConnectionSequelize.create(element);
+    public async createConnection(element: Omit<createConnectionResponse,"id">): Promise<createConnectionResponseResult> {
+        const transaction = await database.transaction();
+        try {
+        const result =  await ConnectionSequelize.create(element,{transaction:transaction,returning:true});
+        await transaction.commit();
+        return {
+            status : 'success',
+            data : {
+              id: result.id,
+              diagram_id: element.diagram_id,
+              source: element.source,
+              sourceHandle: element.source_handle,
+              target: result.target,
+              targetHandle: result.target_handle,
+              data: {
+                  uuid: result.uuid,
+                  label: result.label??"",
+                  type: result.type??""
+              }
+            }
+          };
        } catch (error) {
+        transaction.rollback();
         throw new ResponseError(403,JSON.stringify(error));
        }
        

@@ -61,7 +61,7 @@ class ElementService {
       console.log(elementInDiagram);
       console.log('\n');
       
-      const elementInDiagramTransform : any[] = elementInDiagram.map(element => {
+      const elementInDiagramTransform : getElementResponse[] = elementInDiagram.map(element => {
         return {
         id: element.element_diagrams[0].id, 
         type:element.elements_library?.type,

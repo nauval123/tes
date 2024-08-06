@@ -1,4 +1,4 @@
-import { createConnectionResponse } from "../models/connections.model";
+import { createConnectionResponse, createConnectionResponseResult } from "../models/connections.model";
 import {createElementResponse } from "../models/elements.model";
 import ConnectionRepository from "../repositories/connectionRepository";
 import elementRepository from "../repositories/elementRepository";
@@ -29,7 +29,7 @@ class ConnectionService {
       return await ConnectionRepository.getConnectionOnCertainDiagram((diagram_id));
     }
 
-    public async createConnection(connection: Omit<createConnectionResponse, "id">): Promise<ConnectionSequelize> {
+    public async createConnection(connection: Omit<createConnectionResponse, "id">): Promise<createConnectionResponseResult> {
       const validation = ConnectionValidation.CreateConnection.safeParse(connection);
       if(!validation.success){
         throw new ResponseError(400,JSON.stringify(validation.error.format()));

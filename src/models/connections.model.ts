@@ -17,6 +17,24 @@ export type getConnectionResponse = {
     label: string,
     type: string
   }
+  
+
+  export type createConnectionResponseResult = {
+    status : string,
+    data : {
+      id: number , 
+      diagram_id: number,
+      source: number | string,
+      sourceHandle: string,
+      target: number,
+      targetHandle: string,
+      data: {
+          uuid: string,
+          label: string,
+          type: string
+      }
+    }
+  }
 
   export type updateConnectionResponse ={
     diagram_id:number,
