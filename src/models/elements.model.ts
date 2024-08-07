@@ -100,6 +100,7 @@ export type getElementResponse ={
   width: number,      
   elementlib_id : number,
   uuid:string,
+  occurence: boolean,
 }
 
 export type createElementResponse = {
@@ -183,6 +184,23 @@ export type updateElementStyleDTO = {
   diagram_id:number,
 }
 
+export const transformElementBulkCreateData = (node: any) => ({
+  diagram_id: node.diagram_id,
+  type: node.type,
+  title: node.data.title,
+  description: node.data.description,
+  icon: node.data.icon,
+  key: node.data.key,
+  position_x: node.position.x,
+  position_y: node.position.y,
+  uuid: node.data.uuid,
+  elementlib_id: node.elementlib_id,
+  width: node.width,
+  height: node.height,
+  type_f: node.type_f,
+  occurence: node.occurence
+});
+
 
 export type createElementResponseResult = {
   status : string,
@@ -210,5 +228,31 @@ export type createElementResponseResult = {
    height: number
   } | any;
 }
+
+
+export type deleteElementDTO = {
+    id: number,
+    diagram_id: number,
+    type: string,
+    position:{
+        x: number,
+        y: number
+    },
+    elementlib_id: number,
+    uuid: string,
+    type_f: string,
+    data:
+      {
+        id: number,
+        uuid : string,
+        title: string,
+        key : number,
+        description: string,
+        icon : string
+      },
+   width : number,
+   height: number
+}
+
 
 

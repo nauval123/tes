@@ -40,6 +40,10 @@ class ConnectionService {
     public async deleteConnection(id: number): Promise<number> {
       return await ConnectionRepository.deleteConnection(id);
     }
+
+    public async deleteBulkConnection(connection_id: number[]): Promise<number> {
+      return await ConnectionRepository.deleteBulkConnection(connection_id);
+    }
 }
 
 export default new ConnectionService;

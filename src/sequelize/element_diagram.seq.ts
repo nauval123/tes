@@ -12,16 +12,18 @@ export default class ElementDiagramSequelize extends Model {
   public element_id!: string;
   public diagram_id!: number;
   public style_id!: number;
-  public occurence_status!: boolean;
+  public occurence!: boolean;
 
   public element_indiagram?: ElementSequelize;
   public diagram_elements? : DiagramSequelize;
   public element_style? : ElementStyleSequlize | any;
+  // public connection? : ConnectionSequelize;
 
   public static associations: {
     element_indiagram: Association<ElementDiagramSequelize, ElementSequelize>;
     diagram_element: Association<ElementDiagramSequelize,DiagramSequelize>;
     element_style: Association<ElementDiagramSequelize,ElementStyleSequlize>;
+    // connection: Association<ElementDiagramSequelize,ConnectionSequelize>
   };
 }
 
@@ -71,14 +73,15 @@ export const ElementDiagramInitialize = (sequelize: Sequelize) => {
     timestamps: false,
   });
   
-  ElementDiagramSequelize.beforeDestroy(async (elementDiagramInstance, options) => {
-    const transaction = options.transaction;
+  // ElementDiagramSequelize.beforeDestroy(async (elementDiagramInstance, options) => {
+  //   const transaction = options.transaction;
   
-    await ConnectionSequelize.destroy({
-      where: {
-        [Op.or]: [{ source: elementDiagramInstance.id }, { target: elementDiagramInstance.id }]
-      },
-      transaction
-    });
-  });  
+  //   await ConnectionSequelize.destroy({
+  //     where: {
+  //       [Op.or]: [{ source: elementDiagramInstance.id }, { target: elementDiagramInstance.id }]
+  //     },
+  //     transaction
+  //   });
+  // });
+
 }

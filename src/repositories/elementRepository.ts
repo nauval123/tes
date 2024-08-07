@@ -9,7 +9,7 @@ import ElementStyleSequelize from "../sequelize/element_style";
 import { title } from "process";
 import { ResponseError } from "../response/error/error_response";
 import database from "../database";
-import { Transaction, where } from "sequelize";
+import { Op, Transaction, where } from "sequelize";
 import { response } from "express";
 
 
@@ -110,14 +110,15 @@ class ElementRepository{
     public async createElementIntoCanvas (element: Omit<testCreateElement,"id">):Promise<createElementResponseResult>{
         console.log("== repository createElementIntoCanvas ==");
         console.log(element);
-        console.log("\n");
+        console.log('\n');
+        // console.log("\n");
         const transaction = await database.transaction();
         
         try {
             const newElementStyle = await ElementStyleSequelize.create(
                 {
-                    x : element.position_x,
-                    y : element.position_y,
+                    x : Math.ceil(element.position_x),
+                    y :  Math.ceil(element.position_y),
                     width : element.width,
                     height: element.height
                 },
@@ -127,10 +128,10 @@ class ElementRepository{
                 }
             );
 
-            console.log("\n");
-            console.log("hasil dari Element Style");
-            console.log(newElementStyle);
-            console.log("\n");
+            // console.log("\n");
+            // console.log("hasil dari Element Style");
+            // console.log(newElementStyle);
+            // console.log("\n");
 
             const newElement = await ElementSequelize.create(
                 element,
@@ -153,10 +154,10 @@ class ElementRepository{
                 {returning:true,transaction}
             );
 
-            console.log("\n");
-            console.log("hasil dari Element Diagram");
-            console.log(elementDiagram);
-            console.log("\n");
+            // console.log("\n");
+            // console.log("hasil dari Element Diagram");
+            // console.log(elementDiagram);
+            // console.log("\n");
 
             
             const ElementResult = await ElementSequelize.findByPk(
@@ -171,23 +172,23 @@ class ElementRepository{
                 },
             );
 
-            console.log("\n");
-            console.log("hasil dari Element ");
-            console.log(newElement);
-            console.log(ElementResult);
-            console.log("\n");  
+            // console.log("\n");
+            // console.log("hasil dari Element ");
+            // console.log(newElement);
+            // console.log(ElementResult);
+            // console.log("\n");  
 
             await transaction.commit();
 
             return {
                 status:"success",
                 data: {
-                    id: Number(elementDiagram.id),
+                    id: elementDiagram.id,
                     diagram_id: elementDiagram.diagram_id,
                     type:ElementResult?.elements_library.type,
                     position:{
-                        x: newElementStyle.x,
-                        y: newElementStyle.y
+                        x: Number(newElementStyle.x),
+                        y: Number(newElementStyle.y)
                     },
                     elementlib_id: newElement.elementlib_id,
                     uuid: newElement.uuid,
@@ -201,14 +202,15 @@ class ElementRepository{
                         description: newElement.description,
                         icon : newElement.icon
                       },
-                   width : newElementStyle.width,
-                   height: newElementStyle.height
+                   width : Number(newElementStyle.width),
+                   height: Number(newElementStyle.height),
+                   occurence:elementDiagram.occurence,
                   }
             }
         } catch (error) {
-            console.log("\n");
-            console.log(error);
-            console.log("\n");
+            // console.log("\n");
+            // console.log(error);
+            // console.log("\n");
             await transaction.rollback();
             throw new ResponseError(500,JSON.stringify(error));
         }
@@ -234,9 +236,77 @@ class ElementRepository{
         }
     }
 
-    public async createBatch(element: bulkCreateElementResponse[]): Promise<ElementSequelize[]> {
-        return await ElementSequelize.bulkCreate(element);
+    public async createBulkElementsIntoCanvas(diagram_id:number,elements: Omit<testCreateElement, "id">[]): Promise<createElementResponseResult> {
+        console.log("== repository createBulkElementsIntoCanvas ==");
+        
+        const transaction = await database.transaction();
+        
+        try {
+            // Buat semua style elemen secara bersamaan
+            const styles = elements.map(element => ({
+                x: element.position_x,
+                y: element.position_y,
+                width: element.width,
+                height: element.height
+            }));
+            const newElementStyles = await ElementStyleSequelize.bulkCreate(styles, { returning: true, transaction });
+    
+            console.log("hasil dari Element Styles", newElementStyles);
+    
+            // Buat semua elemen secara bersamaan
+            const newElements = await ElementSequelize.bulkCreate(elements.map((element, index) => ({
+                ...element,
+                style_id: newElementStyles[index].id
+            })), { returning: true, transaction });
+    
+            console.log("hasil dari Elements", newElements);
+    
+            // Buat semua elemen_diagram secara bersamaan
+            const elementDiagrams = newElements.map((newElement, index) => ({
+                diagram_id: diagram_id,
+                element_id: newElement.uuid,
+                style_id: newElementStyles[index].id,
+                occurence: false
+            }));
+            const newElementDiagrams = await ElementDiagramSequelize.bulkCreate(elementDiagrams, { returning: true, transaction });
+    
+            console.log("hasil dari Element Diagrams", newElementDiagrams);
+    
+            await transaction.commit();
+            const final_form  = newElementDiagrams.map((elementDiagram, index) => ({             
+                    id: Number(elementDiagram.id),
+                    diagram_id: elementDiagram.diagram_id,
+                    type: newElements[index]?.elements_library.type,
+                    position: {
+                        x: newElementStyles[index].x,
+                        y: newElementStyles[index].y
+                    },
+                    elementlib_id: newElements[index].elementlib_id,
+                    uuid: newElements[index].uuid,
+                    type_f: newElements[index].type_f,
+                    data: {
+                        id: Number(elementDiagram.id),
+                        uuid: newElements[index].uuid,
+                        title: newElements[index].title,
+                        key: newElements[index]?.elements_library.unique_key,
+                        description: newElements[index].description,
+                        icon: newElements[index].icon
+                    },
+                    width: newElementStyles[index].width,
+                    height: newElementStyles[index].height,
+                    occurence: elementDiagram.occurence
+            }));
+            return {
+                status:"success",
+                data : final_form
+            }
+        } catch (error) {
+            console.log("Error", error);
+            await transaction.rollback();
+            throw new ResponseError(500, JSON.stringify(error));
+        }
     }
+    
  
     public async update(element_diagram_id:number, data : Partial<ElementSequelize>): Promise<[number,ElementSequelize[]]>{
        const transaction = await database.transaction();
@@ -357,12 +427,58 @@ class ElementRepository{
           }
       
           await elementDiagramInstance.destroy({ transaction });
+          await ElementStyleSequelize.destroy(
+            {
+                where:{
+                    id:elementDiagramInstance.style_id
+                },
+                transaction:transaction
+            }
+          );
       
           await transaction.commit();
           return element_diagram_id;
         } catch (error) {
           await transaction.rollback();
           throw new ResponseError(500, JSON.stringify(error));
+        }
+      }      
+
+      public async deleteBulkElement(element_diagram_id: number[]): Promise<number> {
+        console.log("\n deleteBulkElement \n", element_diagram_id);
+        
+        const transaction = await database.transaction();
+        try {
+            const instances = await ElementDiagramSequelize.findAll({
+                where: {
+                    id: {
+                        [Op.in]: element_diagram_id
+                    }
+                },
+                transaction
+            });
+    
+            if (instances.length === 0) {
+                throw new ResponseError(404, "No element diagrams found");
+            }
+    
+            for (const instance of instances) {
+                await instance.destroy({ transaction });
+                await ElementStyleSequelize.destroy(
+                    {
+                        where:{
+                            id: instance.style_id
+                        },
+                        transaction:transaction
+                    },
+                );
+            }            
+    
+            await transaction.commit();
+            return instances.length;
+        } catch (error) {
+            await transaction.rollback();
+            throw new ResponseError(500, JSON.stringify(error));
         }
       }      
 }

@@ -3,7 +3,7 @@ import { logger } from "../application/logging";
 import { ResponseError } from "../response/error/error_response";
 import ConnectionService from "../services/connections.service";
 import { ConnectionValidation } from "../validation/connection_validation";
-import { createConnectionResponse, updateConnectionResponse } from "../models/connections.model";
+import { createConnectionResponse, deleteConnectionDTO, updateConnectionResponse } from "../models/connections.model";
 
 // format data :
 // {
@@ -122,5 +122,29 @@ const deleteConnectionById = async (req: Request, res: Response, next: NextFunct
     }
 }
 
-export default {getAllConnectionInDiagram,deleteConnectionById,getConnectionById,makeConnection,updateAttributeConnection};
+
+const deleteBulkConnection = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        console.log("\n");
+        console.log(" element controller deleteBulkConnection");
+        console.log(req.body);
+        console.log("\n");
+
+        const connectionsToDelete = req.body.data;
+        const connectionsToDeleteIds : number [] = connectionsToDelete.map((connection : deleteConnectionDTO) => connection.id);
+        const result = ConnectionService.deleteBulkConnection(connectionsToDeleteIds);
+        logger.debug("response:" + JSON.stringify(result));
+        res.status(200).json({ 
+            status:"success",
+            code: 200,
+        });
+    } catch (error) {
+        // console.log(error);
+        next(error);
+    }
+}
+
+
+export default {getAllConnectionInDiagram,deleteConnectionById,getConnectionById,makeConnection,updateAttributeConnection,deleteBulkConnection};
 

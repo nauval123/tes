@@ -21,7 +21,7 @@ apiRouter.get("/elementslib/testing",elementLibraryController.testing);
 apiRouter.get('/elementslib/:id', elementLibraryController.getById);
 apiRouter.post('/elementslib/',elementLibraryController.post);
 apiRouter.put("/elementslib/:id",elementLibraryController.update);
-apiRouter.delete("/:id",elementLibraryController.deleteById);
+apiRouter.delete("/elementslib/:id",elementLibraryController.deleteById);
 // elementslib section
 
 // elements section
@@ -30,15 +30,19 @@ apiRouter.post('/elements/createTest',elementController.testCreate);
     // create dari elment list
 apiRouter.post('/elements/create',elementController.CreateElementFromElementlist);
     // dapatkan semua element yang ada pada diagram tertentu
+    //====
+    // create bulk  
+apiRouter.post('/elements/bulkcreate',elementController.CreateBulkElement);    
+    //=====
 apiRouter.get('/elements/getAll/:diagram_id',elementController.getElementindDiagram)
     //=== 
 apiRouter.post('/elements/',elementController.post);
-apiRouter.post('/elements/list',elementController.postList);
 apiRouter.put('/elements/updateAttribute/:id',elementController.updateOccurence);
     // update element position width
 apiRouter.put('/elements/updateStyle/:id',elementController.updateElementStyle);
-apiRouter.delete("/elements/:id",elementController.deleteById);
+// apiRouter.delete("/elements/:id",elementController.deleteById);
 apiRouter.delete("/elements/delete/:id",elementController.deleteElementFromCanvas);
+apiRouter.post("/elements/bulkdelete",elementController.deleteBulkElementFromCanvas);
 // ====== element section
 
 // connection
@@ -47,5 +51,6 @@ apiRouter.get('/connection/:id', connectionController.getConnectionById);
 apiRouter.post('/connection/create/',connectionController.makeConnection);
 apiRouter.put("/connection/:id",connectionController.updateAttributeConnection);
 apiRouter.delete("/connection/:id",connectionController.deleteConnectionById);
+apiRouter.post("/connection/bulkdelete",connectionController.deleteBulkConnection);
 
 // attribute

@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import database from "../database";
 import { createConnectionResponse, createConnectionResponseResult } from "../models/connections.model";
 import { createElementResponse } from "../models/elements.model";
@@ -54,6 +55,8 @@ class ConnectionRepository{
               sourceHandle: element.source_handle,
               target: result.target,
               targetHandle: result.target_handle,
+              type: result.type??"",
+              label: result.label??"",
               data: {
                   uuid: result.uuid,
                   label: result.label??"",
@@ -91,6 +94,32 @@ class ConnectionRepository{
     public async deleteConnection(id: number): Promise<number> {
     return await ConnectionSequelize.destroy({ where: { id } });
     }
+
+    public async deleteBulkConnection(connection_ids: number[]): Promise<number> {
+        const transaction = await database.transaction();
+        try {
+            const instances = await ConnectionSequelize.destroy({
+                where: {
+                    id: {
+                        [Op.in]: connection_ids
+                    }
+                },
+                transaction:transaction,
+            });
+    
+            if (instances === 0) {
+                throw new ResponseError(404, "No element connections found");
+            }
+    
+                   
+    
+            await transaction.commit();
+            return instances;
+        } catch (error) {
+            await transaction.rollback();
+            throw new ResponseError(500, JSON.stringify(error));
+        }
+      }      
 }
 
 export default new ConnectionRepository();

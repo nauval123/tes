@@ -28,6 +28,8 @@ export type getConnectionResponse = {
       sourceHandle: string,
       target: number,
       targetHandle: string,
+      type: string,
+      label: string,
       data: {
           uuid: string,
           label: string,
@@ -45,4 +47,15 @@ export type getConnectionResponse = {
     uuid: string,
     label: string,
     // type: string
+  }
+
+  export type deleteConnectionDTO = {
+    id: number , 
+    diagram_id: number,
+    source: number | string,
+    sourceHandle: string,
+    target: number,
+    targetHandle: string,
+    type: string,
+    label: string,
   }
