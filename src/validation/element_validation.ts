@@ -44,6 +44,23 @@ export class ElementValidation {
         type_f : z.string().min(1)
     });
 
+    static readonly CreateBulkFromElementList : ZodType = z.object({
+        title: z.string().min(0).max(100),
+        description: z.string().min(0),
+        type: z.enum(['node','group']),
+        icon: z.string().min(0),
+        key: z.number().min(0),
+        position_x: z.number().min(1),
+        position_y: z.number().min(1),        
+        width: z.number().min(1),
+        height: z.number().min(1),
+        diagram_id: z.number().min(1),
+        elementlib_id : z.number().min(1),
+        uuid : z.string().min(1),
+        type_f : z.string().min(1),
+        occurences: z.boolean()
+    });
+
     static readonly UPDATE : ZodType = z.object({
         id: z.number().min(1,"id required"),
         title: z.string().min(1,"title required").max(100),

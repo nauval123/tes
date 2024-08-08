@@ -1,5 +1,6 @@
+import { Op } from "sequelize";
 import database from "../database";
-import { createConnectionResponse } from "../models/connections.model";
+import { createConnectionResponse, createConnectionResponseResult } from "../models/connections.model";
 import { createElementResponse } from "../models/elements.model";
 import { ResponseError } from "../response/error/error_response";
 import ConnectionSequelize from "../sequelize/connection.seq";
@@ -40,10 +41,31 @@ class ConnectionRepository{
         );
     }
 
-    public async createConnection(element: Omit<createConnectionResponse,"id">): Promise<ConnectionSequelize> {
-       try {
-        return await ConnectionSequelize.create(element);
+    public async createConnection(element: Omit<createConnectionResponse,"id">): Promise<createConnectionResponseResult> {
+        const transaction = await database.transaction();
+        try {
+        const result =  await ConnectionSequelize.create(element,{transaction:transaction,returning:true});
+        await transaction.commit();
+        return {
+            status : 'success',
+            data : {
+              id: result.id,
+              diagram_id: element.diagram_id,
+              source: element.source,
+              sourceHandle: element.source_handle,
+              target: result.target,
+              targetHandle: result.target_handle,
+              type: result.type??"",
+              label: result.label??"",
+              data: {
+                  uuid: result.uuid,
+                  label: result.label??"",
+                  type: result.type??""
+              }
+            }
+          };
        } catch (error) {
+        transaction.rollback();
         throw new ResponseError(403,JSON.stringify(error));
        }
        
@@ -72,6 +94,32 @@ class ConnectionRepository{
     public async deleteConnection(id: number): Promise<number> {
     return await ConnectionSequelize.destroy({ where: { id } });
     }
+
+    public async deleteBulkConnection(connection_ids: number[]): Promise<number> {
+        const transaction = await database.transaction();
+        try {
+            const instances = await ConnectionSequelize.destroy({
+                where: {
+                    id: {
+                        [Op.in]: connection_ids
+                    }
+                },
+                transaction:transaction,
+            });
+    
+            if (instances === 0) {
+                throw new ResponseError(404, "No element connections found");
+            }
+    
+                   
+    
+            await transaction.commit();
+            return instances;
+        } catch (error) {
+            await transaction.rollback();
+            throw new ResponseError(500, JSON.stringify(error));
+        }
+      }      
 }
 
 export default new ConnectionRepository();

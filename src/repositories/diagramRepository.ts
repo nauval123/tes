@@ -1,59 +1,47 @@
-import {createElementLibResponse } from "../models/element_library.model";
-// import ElementlibJuncAttribModel from "../models/elementlib_attribute.model";
-import ElementLibrarySequelize from "../sequelize/element_library.seq";
+import database from "../database";
+import { updateDiagramRequestDTO } from "../models/diagram.model";
 import { ResponseError } from "../response/error/error_response";
-import ElementDiagramSequelize from "../sequelize/element_diagram.seq";
+import DiagramSequelize from "../sequelize/diagrams.seq";
 
 
-class diagramRepository{
+class DiagramRepository{
     
-    public async findAllElementLib(): Promise<ElementDiagramSequelize[]>{
-        console.log('data terpanggil');
-        return await ElementDiagramSequelize.findAll({include:''});
-    }
-    
-    public async findAllElementLibRelated(): Promise<ElementDiagramSequelize[]>{
-        console.log('data terpanggil');
-        return await ElementDiagramSequelize.findAll({include:'element_junction_fk'});        
+    public async getAllDiagram(): Promise<DiagramSequelize[]>{
+        console.log('\n === getAllDiagram ===');
+        return await DiagramSequelize.findAll();
     }
 
-    public async findById(id: number): Promise<ElementDiagramSequelize | null> {
-        return await ElementDiagramSequelize.findByPk(Number(id));
+    public async getDiagramById(id: number): Promise<DiagramSequelize | null> {
+        console.log('\n === getDiagramById ===');
+        return await DiagramSequelize.findByPk(id);
     }
 
-    public async findByUniqueKey(id: number): Promise<ElementDiagramSequelize | null> {
-        return await ElementDiagramSequelize.findOne({where:{unique_key:id}});
-    }
-
-    public async create(elementlib: Omit<createElementLibResponse,"id">): Promise<ElementDiagramSequelize> {
-        const to_send = {
-            name : elementlib.name,
-            type : elementlib.type,
-            icon : elementlib.icon,
-            default_width : elementlib.default_width,
-            default_height: elementlib.default_height,
-            unique_key:elementlib.unique_key,
-        };
-        return await ElementDiagramSequelize.create(to_send).catch(function (error){
-            throw new ResponseError(400, "error sequelize");
-        });
-    }
-
-    public async update(id:number,data_to_update : Partial<createElementLibResponse>): Promise<[number,ElementDiagramSequelize[]]>{
-        // const to_send = {
-        //     name : data_to_update.data?.title,
-        //     type : data_to_update.type,
-        //     icon : data_to_update.data?.icon,
-        //     default_width : 0,
-        //     default_height: 0,
-        //     unique_key:data_to_update.data?.key,
-        // };
-        return await ElementDiagramSequelize.update(data_to_update, { where: { id }, returning: true });
+    public async updateDiagram(id:number,data_to_update : Partial<updateDiagramRequestDTO>): Promise<[number,DiagramSequelize[]]>{
+        console.log('\n === getDiagramById ===');
+        console.log(data_to_update);
+        console.log('\n');
+        const transaction = await database.transaction();
+      try {
+        const result = await DiagramSequelize.update(
+            data_to_update, 
+            { 
+                where: { id }, 
+                returning: true,
+                transaction:transaction
+            }
+        );
+        await transaction.commit();
+        return result;
+      } catch (error) {
+        await transaction.rollback();
+        throw new ResponseError(500, JSON.stringify(error));
+      }
+       
     }
     
-    public async delete(id: number): Promise<number> {
-    return await ElementDiagramSequelize.destroy({ where: { id } });
+    public async deleteDiagram(id: number): Promise<number> {
+    return await DiagramSequelize.destroy({ where: { id } });
     }
 }
 
-export default new diagramRepository();
+export default new DiagramRepository();

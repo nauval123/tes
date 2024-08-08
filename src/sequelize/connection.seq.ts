@@ -12,6 +12,7 @@ export default class ConnectionSequelize extends Model{
     public uuid!: string;
     // public edgeslib_id?: number;
     public label?: string;
+    public type?: string;
 
     public readonly diagram_connection? : DiagramSequelize;
     public readonly element_source? : ElementDiagramSequelize;
@@ -64,6 +65,9 @@ export const ConnectionInitialize = (sequelize : Sequelize) => {
         },
         uuid:{
           type : DataTypes.STRING,
+        },
+        type:{
+          type: DataTypes.STRING,
         }
         // edgeslib_id: {
         //   type: DataTypes.BIGINT,

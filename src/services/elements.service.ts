@@ -41,9 +41,7 @@ class ElementService {
  
     public async getElementsById(id: number): Promise<ElementDiagramSequelize | null> {
       return await elementRepository.findElementById((id));
-    }
-    
-   
+    }  
 
     public async getElementsByUUIDandTitle(title:string,type_f:string): Promise<ElementSequelize|null>{
       return await elementRepository.findByTittleandType_f(title,type_f);
@@ -56,19 +54,19 @@ class ElementService {
     public async getElementsInDiagramByIdDiagram(diagram_id:number): Promise<getElementResponse[] | null>{
       const elementInDiagram = await elementRepository.getAllElementRelatedDiagram(diagram_id);
       
-      console.log('\n');
-      console.log("getElementsInDiagramByIdDiagram");
-      console.log(elementInDiagram);
-      console.log('\n');
+      // console.log('\n');
+      // console.log("getElementsInDiagramByIdDiagram");
+      // console.log(elementInDiagram);
+      // console.log('\n');
       
-      const elementInDiagramTransform : any[] = elementInDiagram.map(element => {
+      const elementInDiagramTransform : getElementResponse[] = elementInDiagram.map(element => {
         return {
         id: element.element_diagrams[0].id, 
         type:element.elements_library?.type,
         position:{
             style_id: element.element_diagrams[0].style_id,
-            x:element.element_diagrams[0].element_style.x,
-            y:element.element_diagrams[0].element_style.y,
+            x:Number(element.element_diagrams[0].element_style.x),
+            y:Number(element.element_diagrams[0].element_style.y),
           },
         elementlib_id:element.elementlib_id,
         uuid:element.uuid,
@@ -83,8 +81,9 @@ class ElementService {
             default_description:element.elements_library.description_default,
             icon:element.icon
           },
-        width:element.element_diagrams[0].element_style.width,
-        height:element.element_diagrams[0].element_style.height
+        occurence:element.element_diagrams[0].occurence,
+        width:Number(element.element_diagrams[0].element_style.width),
+        height:Number(element.element_diagrams[0].element_style.height)
       }
     });
     
@@ -113,14 +112,26 @@ class ElementService {
       return await elementRepository.createElementIntoCanvas(dataResult.data);
     }
 
+    public async createBulkElementIntoCanvas(diagram_id:number,element: Omit<testCreateElement, "id">[]): Promise<createElementResponseResult> {
+      console.log("\n");
+      console.log("createElementIntoCanvas service")
+      console.log(element);
+      const dataResult = ElementValidation.CreateBulkFromElementList.safeParse(element);
+      if(!dataResult.success){
+        throw new ResponseError(400,JSON.stringify(dataResult.error.format()));
+      }
+      console.log(dataResult.data);
+      console.log("\n");
+      
+      return await elementRepository.createBulkElementsIntoCanvas(diagram_id,dataResult.data);
+    }
+
 
     public async createElements(element: Omit<createElementResponse, "id">): Promise<ElementSequelize> {
       return await elementRepository.create(element);
     }
 
-    public async createElementList(element: bulkCreateElementResponse[]): Promise<ElementSequelize[]> {
-      return await elementRepository.createBatch(element);
-    }
+  
   
     public async updateElements(id: number, element: Partial<updateElementIdentityDTO>): Promise<[number, ElementSequelize[]]> {
       return await elementRepository.update(id, element);
@@ -174,6 +185,11 @@ class ElementService {
   
     public async deleteElement(element_diagram_id:number): Promise<number>{
       return await elementRepository.deleteElement(element_diagram_id);
+    }
+
+    public async deleteBulkElement(element_diagram_id:number[]): Promise<number>{
+      console.log("\n deleteBulkElementFromCanvas");
+      return await elementRepository.deleteBulkElement(element_diagram_id);
     }
 }
 

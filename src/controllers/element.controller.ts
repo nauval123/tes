@@ -5,9 +5,10 @@ import { logger } from "../application/logging";
 import { ElementValidation } from "../validation/element_validation";
 import ElementService from "../services/elements.service";
 import { ResponseError } from "../response/error/error_response";
-import { bulkCreateElementResponse, createElementResponse, updateElementIdentityDTO, updateElementResponse, updateElementStyleDTO } from "../models/elements.model";
+import { bulkCreateElementResponse, createElementResponse, createElementResponseResult, transformElementBulkCreateData, updateElementIdentityDTO, updateElementResponse, updateElementStyleDTO } from "../models/elements.model";
 import ElementSequelize from "../sequelize/elements.seq";
 import elementRepository from "../repositories/elementRepository";
+import { deleteElementDTO } from "../models/elements.model";
 
 // mendapatkan element pada diagram dengan ID tertentu
 const getElementindDiagram = async (req: Request, res: Response, next:NextFunction) => {
@@ -125,10 +126,38 @@ const CreateElementFromElementlist = async (req:Request, res: Response, next : N
         // const result = await ElementService.createElements(dataResult.data);
         const result = await ElementService.createElementIntoCanvas(data_to_validate);
         logger.debug("response:" + JSON.stringify(result));
+        console.log('hasil create', result);
         res.status(200).json({ 
             status:"success",
             code: 200, 
             data: result.data,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// create bulk untuk paste feature
+const CreateBulkElement = async (req:Request, res: Response, next : NextFunction) => {
+    try {
+        console.log("\n");
+        console.log(" controller CreateBulkElement");
+        console.log(req.body);
+        console.log("\n");
+
+        const elements = req.body.elements;
+        if (!Array.isArray(elements)) {
+            return res.status(400).json({ error: 'Invalid input. Expected an array of elements.' });
+        }
+        
+        const transformedElements = elements.map(transformElementBulkCreateData);
+        const result = await ElementService.createBulkElementIntoCanvas(req.body.diagram_id,transformedElements);
+       
+        logger.debug("response:" + JSON.stringify(result));
+        res.status(200).json({ 
+            status:"success",
+            code: 200, 
+            data: result,
         });
     } catch (error) {
         next(error);
@@ -194,38 +223,6 @@ const post = async (req: Request, res: Response, next:NextFunction) => {
     }
 }
 
-const postList = async (req: Request, res: Response, next:NextFunction) => {
-    // format data
-    try {
-        console.log('data from react js req');
-        console.log(req.body);
-        console.log('============');
-        const data_to_validate: bulkCreateElementResponse[] = req.body.data.map((elementData: createElementResponse) => ({
-            description: elementData.data.description,
-            title: elementData.data.title,
-            position_x: elementData.position.x,
-            position_y: elementData.position.y,
-            diagram_id: 1,
-            elementlib_id: elementData.elementlib_id,
-            width: elementData.width,
-            height: elementData.height,
-            uuid: elementData.uuid,
-            elementLibrary_element:{}
-          }));
-        console.log('data from react js');
-        console.log(data_to_validate);
-        console.log('============');
-        // const dataResult = ElementValidation.CREATE.safeParse(data_to_validate);
-        const result = await ElementService.createElementList(data_to_validate);
-        // logger.debug("response:" + JSON.stringify(result));
-        res.status(200).json({ 
-            status:"success data from react js",
-            code: 200, 
-        });
-    } catch (error) {
-        next(error);
-    }
-}
 
 const getById = async (req: Request, res: Response, next:NextFunction) => {
     try {
@@ -245,6 +242,7 @@ const getById = async (req: Request, res: Response, next:NextFunction) => {
 
 const deleteById = async (req: Request, res: Response, next:NextFunction) => {
     try {
+        console.log("\n controller deleteById \n");
         await checkIfExistById(Number(req.params.id),next);
         const result = ElementService.deleteElement(Number(req.params.id));
         logger.debug("response:" + JSON.stringify(result));
@@ -259,6 +257,7 @@ const deleteById = async (req: Request, res: Response, next:NextFunction) => {
 
 const deleteElementFromCanvas = async (req: Request, res: Response, next:NextFunction) => {
     try {
+        console.log('deleteElementFromCanvas');
         console.log("\n",req.params.id);
         await checkIfExistById(Number(req.params.id),next);
         const result = ElementService.deleteElement(Number(req.params.id));
@@ -266,6 +265,29 @@ const deleteElementFromCanvas = async (req: Request, res: Response, next:NextFun
         res.status(200).json({ 
             status:"success",
             code: 200,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+const deleteBulkElementFromCanvas = async(req: Request, res: Response, next:NextFunction) => {
+    try {
+        console.log("\n");
+        console.log(" element controller deleteBulkElementFromCanvas");
+        console.log(req.body);
+        console.log("\n");
+        
+        const elementsToDelete = req.body.data;
+        const elementsToDeleteIds : number [] = elementsToDelete.map((element : deleteElementDTO) => element.id);
+
+        // await checkIfExistById(Number(req.params.id),next);
+        const result = ElementService.deleteBulkElement(elementsToDeleteIds);
+        logger.debug("response:" + JSON.stringify(result));
+        res.status(200).json({ 
+            status:"success",
+            code: 200,
+            data: result,
         });
     } catch (error) {
         next(error);
@@ -312,7 +334,7 @@ const checkifOccurenceOrNew = async (title:string, type_f:string, next:NextFunct
 }
 
 export default {
-    getById,getElementindDiagram,post,deleteById,postList,testCreate,
+    getById,getElementindDiagram,post,testCreate,
     updateOccurence,CreateElementFromElementlist,deleteElementFromCanvas,
-    updateElementStyle
+    updateElementStyle,deleteBulkElementFromCanvas,CreateBulkElement
 };

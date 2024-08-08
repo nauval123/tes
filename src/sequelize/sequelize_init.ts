@@ -97,6 +97,7 @@ export const initSequelize = (databases : Sequelize)=>{
     //  === ElementlibJunattribute ===
     
     // element diagram
+    
     ElementDiagramSequelize.belongsTo(ElementStyleSequlize,{
         foreignKey:'style_id',
         // as:"elemenDiagram_diagram"
@@ -110,6 +111,16 @@ export const initSequelize = (databases : Sequelize)=>{
         foreignKey:'element_id',
         // as:"elemendig_element"
     });
+
+    ElementDiagramSequelize.hasMany(ConnectionSequelize,{
+        sourceKey:"id",
+        foreignKey:"source"
+    });
+
+    ElementDiagramSequelize.hasMany(ConnectionSequelize,{
+        sourceKey:"id",
+        foreignKey:"target"
+    });
     // === element diagram ===
 
     //  connection
@@ -118,12 +129,12 @@ export const initSequelize = (databases : Sequelize)=>{
         // as:'connection_diagram'
     });
     
-    ConnectionSequelize.belongsTo(ElementSequelize,{
+    ConnectionSequelize.belongsTo(ElementDiagramSequelize,{
         foreignKey:'source',
         // as:'connection_element_source'
     });
 
-    ConnectionSequelize.belongsTo(ElementSequelize,{
+    ConnectionSequelize.belongsTo(ElementDiagramSequelize,{
         foreignKey:'target',
         // as:'connection_element_target'
     });
