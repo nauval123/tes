@@ -53,4 +53,7 @@ apiRouter.put("/connection/:id",connectionController.updateAttributeConnection);
 apiRouter.delete("/connection/:id",connectionController.deleteConnectionById);
 apiRouter.post("/connection/bulkdelete",connectionController.deleteBulkConnection);
 
-// attribute
+// diagram
+apiRouter.get('/diagram/:id', connectionController.getConnectionById);
+apiRouter.put("/diagram/:id",connectionController.updateAttributeConnection);
+
